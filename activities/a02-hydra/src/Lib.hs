@@ -9,11 +9,7 @@ module Lib
 -- chop :: [Int] -> [Int]
 
 chop :: [Int] -> [Int]
-chop [] = []
-chop (0:xs) = 0 : chop xs
-chop [x] = [x-1]
-chop (x:y:xs) = (x - 1) : y+l : xs
-    where l = length xs + 1
+chop = undefined
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
