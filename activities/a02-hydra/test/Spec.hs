@@ -16,7 +16,7 @@ tests = [
 lottaZeros = frequency [ (2, arbitrary `suchThat` (\x -> x > 0 && x < 10))
                        , (1, return 0) ]
 
-randHydra = vectorOf 10 lottaZeros
+randHydra = listOf1 lottaZeros
 
 
 sameLength :: [Int] -> Bool
@@ -28,7 +28,20 @@ nonzero n (0:xs) = nonzero n xs
 nonzero 1 xs = xs
 nonzero n (_:xs) = nonzero (n-1) xs
 
+allzerobutlast [0] = False
+allzerobutlast [n] = True
+allzerobutlast (0:xs) = allzerobutlast xs
+allzerobutlast (n:xs) = False
+
 difference :: [Int] -> Bool
+difference xx | all (== 0) xx = chop xx == xx
+difference x | allzerobutlast x =
+           length (filter (/= 0) diff) == 1
+        && head nz1 == 1
+        && allzerobutlast diff
+    where chopped = chop x
+          diff = zipWith (-) x chopped
+          nz1 = nonzero 1 diff
 difference x = length (filter (/= 0) diff) == 2
             && head nz1 == 1
             && head nz2 == - length nz2
