@@ -31,7 +31,7 @@ nonzero n (_:xs) = nonzero (n-1) xs
 difference :: [Int] -> Bool
 difference x = length (filter (/= 0) diff) == 2
             && head nz1 == 1
-            && head nz2 == - (length nz2 + 1)
+            && head nz2 == - length nz2
     where chopped = chop x
           diff = zipWith (-) x chopped
           nz1 = nonzero 1 diff
