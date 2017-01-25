@@ -27,7 +27,10 @@ pmod (a,b) | a >= b    = (b, a `mod` b)
 -- Implent fix
 -- YOUR CODE HERE!
 fix :: Eq a => (a->a) -> a -> a
-fix f x = undefined
+fix f x = 	if x == result
+			then x
+			else fix f result
+	where result = f x
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
