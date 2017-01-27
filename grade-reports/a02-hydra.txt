@@ -1,0 +1,36 @@
+a02-hydra-0.1.0.0: configure (lib + exe + test)
+Configuring a02-hydra-0.1.0.0...
+a02-hydra-0.1.0.0: build (lib + exe + test)
+Preprocessing library a02-hydra-0.1.0.0...
+[1 of 1] Compiling Lib              ( src/Lib.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/Lib.o )
+
+/home/mattox/tmp/tmp.i10LQX4hK5/a02-hydra/src/Lib.hs:13:1: warning: [-Wtabs]
+    Tab character found here, and in 11 further locations.
+    Please use spaces instead.
+Preprocessing executable 'a02-hydra-exe' for a02-hydra-0.1.0.0...
+[1 of 1] Compiling Main             ( app/Main.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/a02-hydra-exe/a02-hydra-exe-tmp/Main.o )
+Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/a02-hydra-exe/a02-hydra-exe ...
+Preprocessing test suite 'a02-hydra-test' for a02-hydra-0.1.0.0...
+[1 of 1] Compiling Main             ( test/Spec.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/a02-hydra-test/a02-hydra-test-tmp/Main.o )
+Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/a02-hydra-test/a02-hydra-test ...
+a02-hydra-0.1.0.0: copy/register
+Installing library in
+/home/mattox/tmp/tmp.i10LQX4hK5/a02-hydra/.stack-work/install/x86_64-linux-nopie/lts-7.16/8.0.1/lib/x86_64-linux-ghc-8.0.1/a02-hydra-0.1.0.0-7J6vQijpmdW1PxNhgsmptP
+Installing executable(s) in
+/home/mattox/tmp/tmp.i10LQX4hK5/a02-hydra/.stack-work/install/x86_64-linux-nopie/lts-7.16/8.0.1/bin
+Registering a02-hydra-0.1.0.0...
+a02-hydra-0.1.0.0: test (suite: a02-hydra-test)
+
+Chop Function:
+  Length is preserved: [OK, passed 100 tests]
+  Difference is correct: [OK, passed 100 tests]
+
+         Properties  Total      
+ Passed  2           2          
+ Failed  0           0          
+ Total   2           2          
+
+Completed 2 action(s).
+
+
+Score: 100.0
