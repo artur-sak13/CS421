@@ -19,18 +19,18 @@ main = return ()
 
 -- don't forget to put the type declaration or you will lose points!
 mytake :: Int -> [a] -> [a]
-mytake n _ | (n <= 0) 	= []
-mytake _ [] 			= []  
-mytake n (x:xs) 		= x : mytake(n - 1) xs
+mytake n _ | (n <= 0)   = []
+mytake _ []             = []  
+mytake n (x:xs)         = x : mytake(n - 1) xs
 
 --- ### mydrop
 
 -- don't forget to put the type declaration or you will lose points!
 mydrop :: Int -> [a] -> [a]
-mydrop _ []				= []
+mydrop _ []      = []
 mydrop n (x:xs)
-	| (n <= 0)			= x:xs
-	| otherwise 		= mydrop(n - 1) xs
+	| (n <= 0)   = x:xs
+	| otherwise  = mydrop(n - 1) xs
 
 --- ### rev
 
@@ -48,19 +48,22 @@ app xs ys = foldr (\x y -> x:y) ys xs
 
 -- don't forget to put the type declaration or you will lose points!
 inclist :: Num a => [a] -> [a]
-inclist = undefined
+inclist []     = []
+inclist (x:xs) = x + 1 : inclist xs
 
 --- ### sumlist
 
 -- don't forget to put the type declaration or you will lose points!
 sumlist :: Num a => [a] -> a
-sumlist = undefined
+sumlist []      = 0
+sumlist (x:xs)  = x + sumlist xs
 
 --- ### myzip
 
 -- don't forget to put the type declaration or you will lose points!
 myzip :: [a] -> [b] -> [(a,b)]
-myzip = undefined
+myzip (x:xs) (y:ys) = (x,y) : myzip xs ys
+myzip  _      _     = []
 
 --- ### addpairs
 
@@ -72,13 +75,13 @@ addpairs = undefined
 
 -- don't forget to put the type declaration or you will lose points!
 ones :: [Integer]
-ones = undefined
+ones = 1 : ones
 
 --- ### nats
 
 -- don't forget to put the type declaration or you will lose points!
 nats :: [Integer]
-nats = undefined
+nats = [0..]
 
 --- ### fib
 
