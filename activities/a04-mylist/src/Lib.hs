@@ -9,10 +9,12 @@ data MyList a = Cons a (MyList a)
    deriving (Show,Eq)
 
 list2mylist :: [a] -> MyList a
-list2mylist = undefined
+list2mylist []     = Nil
+list2mylist (x:xs) = Cons x (list2mylist xs)  
 
 mylist2list :: MyList a -> [a]
-mylist2list = undefined
+mylist2list Nil         = []
+mylist2list (Cons x xs) = x : mylist2list xs
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
