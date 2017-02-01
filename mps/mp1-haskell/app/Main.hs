@@ -87,7 +87,7 @@ nats = [0..]
 
 -- don't forget to put the type declaration or you will lose points!
 fib :: [Integer]
-fib = undefined
+fib = [a | (a,b) <- iterate (\(a,b) -> (b, a+b)) (0,1)]
 
 --- Set Theory
 --- ----------
@@ -96,19 +96,30 @@ fib = undefined
 
 -- don't forget to put the type declaration or you will lose points!
 add :: Ord a => a -> [a] -> [a]
-add = undefined
+add x [] = [x]
+add x (y:ys)
+	| x > y     = y : add x ys
+	| x == y 	= y:ys
+	| otherwise = x : y : ys
 
 --- ### union
 
 -- don't forget to put the type declaration or you will lose points!
 union :: Ord a => [a] -> [a] -> [a]
-union = undefined
+union xs []     = xs
+union [] ys     = ys
+union (x:xs) (y:ys)
+	| (x < y)  = x : union xs (y:ys)
+	| (x == y) = union xs (y:ys)
+	| otherwise = y : union (x:xs) ys
 
 --- ### intersect
 
 -- don't forget to put the type declaration or you will lose points!
 intersect :: Ord a => [a] -> [a] -> [a]
-intersect = undefined
+intersect [] ys = []
+intersect xs [] = []
+
 
 --- ### powerset
 
