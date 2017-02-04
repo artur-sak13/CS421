@@ -47,8 +47,8 @@ rev l  = rev' l []
 
 -- don't forget to put the type declaration or you will lose points!
 app :: [a] -> [a] -> [a]
-app  x []	= x
-app [] y    = y
+app  x []    = x
+app [] y     = y
 app (x:xs) y = x : app xs y
 
 --- ### inclist
@@ -113,7 +113,7 @@ add :: Ord a => a -> [a] -> [a]
 add x []        = [x]
 add x (y:ys)
 	| x > y     = y : add x ys
-	| x == y 	= y : ys
+	| x == y    = y : ys
 	| otherwise = x : y : ys
 
 --- ### union
@@ -145,7 +145,7 @@ intersect(x:xs)(y:ys)
 powerset :: Ord a => [a] -> [[a]]
 powerset []     = [[]]
 powerset (x:xs) = union l (map (x:) l)
-		where l = powerset xs
+        where l = powerset xs
 
 
 --- Higher Order Functions
