@@ -29,8 +29,8 @@ mytake n (x:xs)         = x : mytake(n - 1) xs
 mydrop :: Int -> [a] -> [a]
 mydrop _ []      = []
 mydrop n (x:xs)
-	| (n <= 0)   = x:xs
-	| otherwise  = mydrop(n - 1) xs
+    | (n <= 0)   = x:xs
+    | otherwise  = mydrop(n - 1) xs
 
 --- ### rev
 
