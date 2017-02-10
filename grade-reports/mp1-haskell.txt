@@ -1,0 +1,39 @@
+
+
+ ## Standard Output 
+
+
+Running Tests
+=============
+Pass: mytake
+Pass: mydrop
+Pass: rev
+Pass: app
+Pass: inclist
+Pass: sumlist
+Pass: myzip
+Pass: addpairs
+Pass: ones
+Pass: nats
+Pass: fib
+Pass: add
+Pass: union
+Pass: intersect
+Pass: powerset
+Pass: inclist
+Pass: sumlist
+Pass: list2cons
+Pass: cons2list
+Pass: eval
+Pass: list2cons
+Pass: sumTree
+Pass: liftIntOp
+
+Score: 100 / 100
+
+
+ ## Errors (if any) 
+
+
+
+Score: 100.0
