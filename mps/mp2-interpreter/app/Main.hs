@@ -329,16 +329,25 @@ liftIntOp op (IntVal x) (IntVal y) = IntVal $ op x y
 liftIntOp _ _ _ = ExnVal "Cannot lift"
 
 liftBoolOp :: (Bool -> Bool -> Bool) -> Val -> Val -> Val
-liftBoolOp = undefined
+liftBoolOp op (BoolVal x) (BoolVal y) = BoolVal $ op x y
+liftBoolOp _ _ _ = ExnVal "Cannot lift"
 
 liftCompOp :: (Int -> Int -> Bool) -> Val -> Val -> Val
-liftCompOp = undefined
+liftCompOp op (IntVal x) (IntVal y) = BoolVal $ op x y
+liftCompOp _ _ _ = ExnVal "Cannot lift"
 
 --- Eval
 --- ----
 
 eval :: Exp -> Env -> Val
-eval = undefined
+eval (IntExp t) _    = IntVal t
+eval (BoolExp t) env = BoolVal t
+
+eval (IntOpExp op e1 e2) env =
+    let v1 = eval e1 env
+        v2 = eval e2 env
+        Just = H.lookup op intOps
+
 
 --- ### Constants
 
