@@ -8,7 +8,7 @@ module Main where
 
 import System.IO (hFlush, stdout)
 
-import Data.HashMap.Strict as H (HashMap, empty, fromList, insert, lookup)
+import Data.HashMap.Strict as H (HashMap, empty, fromList, insert, lookup, union)
 import Data.Functor.Identity
 
 import Text.ParserCombinators.Parsec hiding (Parser)
@@ -162,8 +162,8 @@ orOp = opExp BoolOpExp "or"
 
 compOp :: Parser (Exp -> Exp -> Exp)
 compOp = let compOpExp s = symbol s >> return (CompOpExp s)
-         in     compOpExp "<="
-            <|> compOpExp ">="
+         in     try (compOpExp "<=")
+            <|> try (compOpExp ">=")
             <|> compOpExp "/="
             <|> compOpExp "=="
             <|> compOpExp "<"
