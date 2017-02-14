@@ -425,31 +425,30 @@ exec (SetStmt var e) penv env = ("", penv, (H.insert var val env))
 
 --- ### Sequencing
 
---- exec (SeqStmt []) penv env     = ("", penv, env)
 exec (SeqStmt (x:xs)) penv env = (p1 ++ p2, penv2, env2)
     where (p1, penv1, env1)    = exec x penv env
-          (p2, penv2, env2)    = exec (SeqStmt xs) penv env1
+          (p2, penv2, env2)    = exec (SeqStmt xs) penv1 env1
 
+exec (SeqStmt []) penv env     = ("", penv, env)
 --- ### If Statements
 
 exec (IfStmt e s1 s2) penv env =
     case eval e env of
-        BoolVal True  -> (exec s1 penv env)
-        BoolVal False -> (exec s2 penv env)
-        _             -> (show $ ExnVal "Condition is not Bool" , penv, env )
+        BoolVal True  -> exec s1 penv env
+        BoolVal False -> exec s2 penv env
+        _             -> (show $ ExnVal "Condition is not a Bool" , penv, env)
     
 
 --- ### Procedure and Call Statements
 
-exec (ProcedureStmt f ps body) penv env = ("", H.insert f (ProcedureStmt f ps body) penv, env)
+exec p@(ProcedureStmt f ps body) penv env = ("", H.insert f p penv, env)
 
 exec (CallStmt f en) penv env =
     let
         el  = map(\e -> eval e env) en
         ff = H.lookup f penv
     in case ff of
-        Nothing                       -> ("Procedure " ++ f ++ " undefined", penv, env)
         Just (ProcedureStmt _ fps bd) -> exec bd penv (H.union (H.fromList (zip fps el)) env)
-
+        Nothing                       -> ("Procedure "++ f ++" undefined", penv, env)
 
 
