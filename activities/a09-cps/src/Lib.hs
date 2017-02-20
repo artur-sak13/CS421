@@ -36,13 +36,27 @@ foo p (x:y:xs) | p x = 2 * x + y : foo p xs
 
 -- Assume that the f argument takes a continuation now.
 
-fixk = undefined
+fixk g x k =
+    g x (\res -> 
+        if x == res
+            then k x
+            else fixk g res k)
 
 -- Write this by calling fixk.  The solution is one line.
 
-multifook = undefined
+multifook p xx k = fixk (fook p) xx k
 
-fook = undefined
+fook p []  k = k []
+fook p [x] k = 
+    p x (\res ->
+        if res
+            then k [x]
+            else k [])
+fook p (x:y:xs) k = 
+    p x (\res ->
+        if res
+            then fook p xs (\z -> k $ 2 * x + y : z)
+            else fook p (y:xs) (\r -> k $ x : r))
 
 -- Utilities
 -- Use these to test your code if you want
