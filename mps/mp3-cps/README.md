@@ -4,15 +4,16 @@ MP3 - CPS Transform
 Logistics
 ---------
 
--   revision: 1.0
--   due: Monday, Feb 27, 2017 (end of day)
+-   revision: 1.1
+-   due: Tuesday, Feb 28, 2017 (end of day)
 
 Changelog
 ---------
 
-### 1.0
+### 1.1
 
--   Initial version.
+-   Updated deadline; fixed `parseExp` and `parseDecl` examples; gave type for
+    `cpsDecl`.
 
 Objectives
 ----------
@@ -45,6 +46,10 @@ Relevant Files
 In the directory `app` you'll find `Main.hs` with all the relevant code. In this
 file you will find all of the data definitions, a simple parser, the REPL, and
 stubbed-out functions for you to finish.
+
+This `README` document contains $\textrm{\LaTeX}$ formatting. To view it
+properly, look at the `README.pdf` file you were given, instead of the
+`README.md` file.
 
 Running Code
 ------------
@@ -290,9 +295,9 @@ expr = let arith  = term `chainl1` addOp
 
 We've also provided the function `parseExp :: String -> Either ParseError Exp`
 which can be used to see what the parser returns for a specific input string.
-This is useful for understanding how the data-structures we use to store
-programs written in our language (the abstract syntax tree) are related to the
-grammar/syntax of our language.
+Combined with the function `ctorParse` that was introduced above, this is useful
+for understanding how our abstract syntax tree (AST) data structures are being
+used to store programs written in our language.
 
 ``` {.haskell}
 parseExp :: String -> Either ParseError Exp
@@ -300,12 +305,14 @@ parseExp str = parse expr "stdin" str
 ```
 
 ``` {.haskell}
-*Main Lib> parseExp "x + 1"
-Right (OpExp "+" (VarExp "x") (IntExp 1))
-*Main Lib> parseExp "asdfa*"
-Left "stdin" (line 1, column 7):
+*Main> parseExp "x + 1"
+Right (x + 1)
+*Main> parseExp "x + 1 asdf*" -- This parse will fail.
+Left "stdin" (line 1, column 12):
 unexpected end of input
 expecting white space, an integer, "if", "\\", an identifier or "("
+*Main> putStrLn $ ctorParse "x + 1" -- Show the AST structure.
+OpExp "+" (VarExp "x") (IntExp 1)
 ```
 
 ### Declarations
@@ -324,7 +331,8 @@ decl = do f <- var
 Once again, we have provided the function
 `parseDecl :: String -> Either ParseError Stmt` which can be used to investigate
 the connection between the grammar of our language and abstract syntax tree of a
-particular program.
+particular program. (We have not provided an equivalent of `ctorParse` for
+`Stmt`, but you could try making your own as an exercise.)
 
 ``` {.haskell}
 parseDecl :: String -> Either ParseError Stmt
@@ -332,8 +340,12 @@ parseDecl str = parse decl "stdin" str
 ```
 
 ``` {.haskell}
-*Main Lib> parseDecl "f x = x + 1"
-Right (Decl "f" ["x"] (OpExp "+" (VarExp "x") (IntExp 1)))
+*Main> parseDecl "f x = x + 1"
+Right f x = (x + 1)
+*Main> parseDecl "f x = x + 1 asdf*" -- This parse will fail.
+Left "stdin" (line 1, column 18):
+unexpected end of input
+expecting white space, an integer, "if", "\\", an identifier or "("
 ```
 
 The REPL
@@ -498,11 +510,16 @@ True
 False
 ```
 
-### `cpsExp :: Exp -> Exp -> Integer -> (Exp, Integer)`
+### Define `cpsExp` - Overview
 
 You'll need to define `cpsExp` over all of the data-constructors that make up
 the `Exp` type. The first argument to `cpsExp` is the expression you are
 transforming, and the second is the current continuation that has been built up.
+Here is the type signature:
+
+``` {.haskell}
+cpsExp :: Exp -> Exp -> Integer -> (Exp, Integer)
+```
 
 Remember that we have provided you with a parser and the function `parseExp`,
 which you can use to type in expressions for testing. Instead of having to write
@@ -621,7 +638,12 @@ $$
 This corresponds to the `cpsDecl` function. It adds an extra parameter `k` to
 the parameter list, and then translates the body of the function. (The
 parentheses on the right-hand side are added for clarity - the equality on the
-left tranforms to the whole equality on the right.)
+left tranforms to the whole equality on the right.) Here is the type signature
+for `cpsDecl`:
+
+``` {.haskell}
+cpsDecl :: Stmt -> Stmt
+```
 
 Monads (optional)
 -----------------
