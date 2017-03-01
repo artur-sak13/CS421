@@ -240,24 +240,50 @@ cpsExp (IntExp i) k n = (AppExp k (IntExp i), n)
 cpsExp (VarExp v) k n = (AppExp k (VarExp v), n)
 
 --- #### Define `cpsExp` for If Expressions
+
 cpsExp (IfExp e1 e2 e3) k n =
-    case ifSimple e1 of
-        True -> let 
-            (ne2, n2) = (cpsExp e2 k n)
-            (ne3, n3) = (cpsExp e3 k n2)
-        in
-            (IfExp e1 ne2 ne3, n3)
-        False -> let
-            (v, n1)   = gensym n
-            (ne2, n2) = (cpsExp e2 k n1)
-            (ne3, n3) = (cpsExp e3 k n2)
-        in
-            cpsExp e1 (LamExp v (IfExp(VarExp v) ne2 ne3)) n3
+  case isSimple e1 of
+    True -> 
+      let 
+        (ne2, n2) = (cpsExp e2 k n)
+        (ne3, n3) = (cpsExp e3 k n2)
+      in
+        (IfExp e1 ne2 ne3, n3)
+    False ->
+      let
+        (v, n1)   = gensym n
+        (ne2, n2) = (cpsExp e2 k n1)
+        (ne3, n3) = (cpsExp e3 k n2)
+      in
+        cpsExp (e1) (LamExp v(IfExp (VarExp v) ne2 ne3)) n3
+
 --- #### Define `cpsExp` for Operator Expressions
+cpsExp (OpExp f e1 e2) k n =
+  case (isSimple e1, isSimple e2) of
+    (True, True) -> (AppExp k (OpExp f e1 e2), n)
+    (True, False) ->
+      let (v, n2) = gensym n
+      in cpsExp e2 (LamExp v (AppExp k (OpExp f e1 (VarExp v)))) n2
+    (False, True) ->
+      let (v, n2) = gensym n
+      in cpsExp e1 (LamExp v (AppExp k (OpExp f (VarExp v) e2))) n2
+    (False, False) ->
+      let
+        (v1, n1) = gensym n
+        (v2, n2) = gensym n1
+        (ne2, n3) = cpsExp e2 (LamExp v2 (AppExp k (OpExp f (VarExp v1) (VarExp v2)))) n2
+      in
+        cpsExp e1 (LamExp v1 ne2) n3
+
 
 --- #### Define `cpsExp` for Application Expressions
+cpsExp (AppExp f e1) k n
+  | isSimple e1 = (AppExp (AppExp f e1) k, n)
+  | otherwise = let (v, n1) = gensym n in cpsExp e1 (LamExp v (AppExp(AppExp f (VarExp v)) k)) n1
 
 --- ### Define `cpsDecl`
 
 cpsDecl :: Stmt -> Stmt
-cpsDecl = undefined
+cpsDecl (Decl f ss e1) =
+  let (e, n) = cpsExp e1 (VarExp "k") 0
+  in Decl f (ss++["k"]) e
