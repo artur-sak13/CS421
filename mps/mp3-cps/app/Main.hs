@@ -201,12 +201,19 @@ main = do putStrLn "Welcome to the CPS Transformer!"
 --- ### `factk :: Integer -> (Integer -> t) -> t`
 
 factk :: Integer -> (Integer -> t) -> t
-factk = undefined
+factk 0 k = k 1
+factk n k = factk (n - 1) (\v -> k $ v * n)
 
 --- ### `evenoddk :: [Integer] -> (Integer -> t) -> (Integer -> t) -> t`
 
 evenoddk :: [Integer] -> (Integer -> t) -> (Integer -> t) -> t
-evenoddk = undefined
+evenoddk [x] ke ko
+    | even x    = ke x
+    | otherwise = ko x
+
+evenoddk (x:xs) ke ko
+    | even x    = evenoddk xs (\v -> ke $ v + x) ko
+    | otherwise = evenoddk xs ke (\v -> ko $ v + x) 
 
 --- Automated Translation
 --- ---------------------
@@ -217,17 +224,35 @@ gensym i = ("v" ++ show i, i + 1)
 --- ### Define `isSimple`
 
 isSimple :: Exp -> Bool
-isSimple = undefined
+isSimple (IntExp _ )      = True
+isSimple (VarExp _)       = True
+isSimple (LamExp _ _)     = True 
+isSimple (IfExp e1 e2 e3) = all isSimple [e1,e2,e3]
+isSimple (OpExp op e1 e2) = isSimple e1 && isSimple e2
+isSimple (AppExp _ _)     = False
 
 --- ### `cpsExp :: Exp -> Exp -> Integer -> (Exp, Integer)`
 
 cpsExp :: Exp -> Exp -> Integer -> (Exp, Integer)
-cpsExp = undefined
 
 --- #### Define `cpsExp` for Integer and Variable Expressions
+cpsExp (IntExp i) k n = (AppExp k (IntExp i), n)
+cpsExp (VarExp v) k n = (AppExp k (VarExp v), n)
 
 --- #### Define `cpsExp` for If Expressions
-
+cpsExp (IfExp e1 e2 e3) k n =
+    case ifSimple e1 of
+        True -> let 
+            (ne2, n2) = (cpsExp e2 k n)
+            (ne3, n3) = (cpsExp e3 k n2)
+        in
+            (IfExp e1 ne2 ne3, n3)
+        False -> let
+            (v, n1)   = gensym n
+            (ne2, n2) = (cpsExp e2 k n1)
+            (ne3, n3) = (cpsExp e3 k n2)
+        in
+            cpsExp e1 (LamExp v (IfExp(VarExp v) ne2 ne3)) n3
 --- #### Define `cpsExp` for Operator Expressions
 
 --- #### Define `cpsExp` for Application Expressions
