@@ -44,4 +44,11 @@ parseSymbol s (x:xs) =
 
 parse xx = parseE (words xx)
 
-parseE = undefined
+parseE (x:xs) |  isSymbol "+" x = 
+    let (e1, r1) = parseE xs
+        (e2, r2) = parseE r1
+    in (PlusExp e1 e2, r2)
+
+parseE (x:xs) 
+    | isInt x = (IntExp (read x), xs)
+    | otherwise = let var = xs in parseE var
