@@ -1,0 +1,33 @@
+monad-activity-0.1.0.0: unregistering (local file changes: /home/mattox/repos/cs421/activities/monad-activity/README.md /home/mattox/repos/cs421/activities/...)
+monad-activity-0.1.0.0: configure (lib + exe + test)
+Configuring monad-activity-0.1.0.0...
+monad-activity-0.1.0.0: build (lib + exe + test)
+Preprocessing library monad-activity-0.1.0.0...
+[1 of 1] Compiling Lib              ( src/Lib.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/Lib.o )
+Preprocessing executable 'monad-activity-exe' for monad-activity-0.1.0.0...
+[1 of 1] Compiling Main             ( app/Main.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/monad-activity-exe/monad-activity-exe-tmp/Main.o )
+Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/monad-activity-exe/monad-activity-exe ...
+Preprocessing test suite 'monad-activity-test' for monad-activity-0.1.0.0...
+[1 of 1] Compiling Main             ( test/Spec.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/monad-activity-test/monad-activity-test-tmp/Main.o )
+Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/monad-activity-test/monad-activity-test ...
+monad-activity-0.1.0.0: copy/register
+Installing library in
+/home/mattox/tmp/tmp.vePoclD4Vu/monad-activity/.stack-work/install/x86_64-linux-nopie/lts-7.16/8.0.1/lib/x86_64-linux-ghc-8.0.1/monad-activity-0.1.0.0-JRAVkdJMSdDIdEafAZTzPo
+Installing executable(s) in
+/home/mattox/tmp/tmp.vePoclD4Vu/monad-activity/.stack-work/install/x86_64-linux-nopie/lts-7.16/8.0.1/bin
+Registering monad-activity-0.1.0.0...
+monad-activity-0.1.0.0: test (suite: monad-activity-test)
+
+Counter Monad:
+  Counts bindings: [OK, passed 100 tests]
+  Preserves data: [OK, passed 100 tests]
+
+         Properties  Total      
+ Passed  2           2          
+ Failed  0           0          
+ Total   2           2          
+
+Completed 2 action(s).
+
+
+Score: 100.0
