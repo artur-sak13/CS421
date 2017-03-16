@@ -119,13 +119,24 @@ initialDictionary = initArith ++ initComp
 --- ### Arithmetic Operators
 
 initArith :: Dictionary
-initArith = [ ("+",  [Prim (liftIntOp  (+))])
-            ]
+initArith = [
+    ("+",  [Prim (liftIntOp (+))]),
+    ("-", [Prim (liftIntOp (-))]),
+    ("*", [Prim (liftIntOp (*))]),
+    ("/", [Prim (liftIntOp (div))])
+    ]
 
 --- ### Comparison Operators
 
 initComp :: Dictionary
-initComp = []
+initComp = [
+    ("<", [Prim (liftCompOp (<))]),
+    (">", [Prim (liftCompOp (>))]),
+    ("<=", [Prim (liftCompOp (<=))]),
+    (">=", [Prim (liftCompOp (>=))]),
+    ("==", [Prim (liftCompOp (==))]),
+    ("!=", [Prim (liftCompOp (/=))])
+    ]
 
 --- The Parser
 --- ----------
@@ -173,6 +184,7 @@ eval (".":words) _ = underflow
 --- ### Printing the Stack
 eval (".S":words) (istack, cstack, dict, out)
     = eval words (istack, cstack, dict, (intercalate " " $ map show (reverse istack)):out)
+
 --- ### Stack Manipulations
 -- 'dup'
 
@@ -199,40 +211,37 @@ eval ("rot" :words) _ = underflow
 
 --- ### User definitions
 
-eval (":":words)(istack,cstack,dict,out) =
+eval (":":words)(istack, cstack, dict, out) = 
     let
-        split = splitWellNested (":", ";") words
-    in case (fst split) of
-        [] -> eval (snd split) (istack, cstack, dict, out)
-        rest -> eval (snd split) (istack, cstack, hash, out)
-            where hash = dinsert (rest!!0)(Def $ (tail rest) ) dict
+        ((k:v), rest) = splitWellNested (":",";") words
+        hash = dinsert k (Def v) dict
+    in
+        eval rest (istack, cstack, hash, out)
 
 --- ### Conditionals
-eval (cond:"if":words)(istack, cstack, dict, out) =
+
+eval ("if":words) (i:istack, cstack, dict, out) = 
     let 
-        (tru,fal,rst) = splitIf words
-        (istk, cstk, d, ot) = eval (cond:[])(istack,cstack,dict,out)
-    in case istk of 
-        i:is -> case i of 
-            (-1) -> eval (tru++rst)(is,cstack,dict,out)
-            (0) -> eval (fal++rst)(is,cstack,dict,out)
-        _ -> underflow
+        (tru, fal, thn) = splitIf words
+    in case i of 
+        0  -> eval (fal++thn) (istack, cstack, dict, out)
+        _  -> eval (tru++thn) (istack, cstack, dict, out)
+
 --- ### Loops
 eval ("begin":words)(istack, cstack, dict, out) = 
-    let
-        (body, rest) = splitWellNested ("begin",  "again") words
-    in
-        eval body (istack,("begin":body):rest:cstack, dict, out)
+    let (x, xs) = splitWellNested ("begin", "again") words
+    in eval x (istack, ("begin":x):xs:cstack, dict, out)
 
 --- ### Lookup in dictionary
 
 eval ("exit":words)(istack, cstack, dict, out) =
-    eval [] (istack, (removeLoop cstack), dict, out)
-    where
-        removeLoop [[]] = [[]]
-        removeLoop ((x:xs):rest)
-            | x == "begin" = rest
-            | otherwise = removeLoop rest
+    if(cstack == []) 
+        then underflow 
+        else 
+            case (head cstack) of
+                ("begin":res) -> eval [] (istack, (tail cstack), dict, out)
+                []            -> eval [] (istack, [], dict,out)
+                otherwise     -> eval ("exit":words) (istack, (tail cstack), dict, out)
 
 -- otherwise it should be handled by `dlookup` to see if it's a `Num`, `Prim`,
 -- `Def`, or `Unknown`
