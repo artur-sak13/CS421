@@ -104,7 +104,11 @@ liftIntOp _  _        = underflow
 --- ### `liftCompOp`
 
 liftCompOp :: (Integer -> Integer -> Bool) -> IStack -> IStack
-liftCompOp = undefined
+liftCompOp op (x:y:xs)
+    | (y `op` x) = -1:xs
+    | otherwise  = 0:xs
+
+liftCompOp _ _ = underflow
 
 --- The Dictionary
 --- --------------
@@ -115,13 +119,24 @@ initialDictionary = initArith ++ initComp
 --- ### Arithmetic Operators
 
 initArith :: Dictionary
-initArith = [ ("+",  [Prim (liftIntOp  (+))])
-            ]
+initArith = [
+    ("+",  [Prim (liftIntOp (+))]),
+    ("-", [Prim (liftIntOp (-))]),
+    ("*", [Prim (liftIntOp (*))]),
+    ("/", [Prim (liftIntOp (div))])
+    ]
 
 --- ### Comparison Operators
 
 initComp :: Dictionary
-initComp = []
+initComp = [
+    ("<", [Prim (liftCompOp (<))]),
+    (">", [Prim (liftCompOp (>))]),
+    ("<=", [Prim (liftCompOp (<=))]),
+    (">=", [Prim (liftCompOp (>=))]),
+    ("==", [Prim (liftCompOp (==))]),
+    ("!=", [Prim (liftCompOp (/=))])
+    ]
 
 --- The Parser
 --- ----------
@@ -142,7 +157,14 @@ splitWellNested (start,end) words = splitWN 0 [] words
 
 -- ifs have an optional `else` which also must be well-nested
 splitIf :: [String] -> ([String], [String], [String])
-splitIf = undefined
+
+splitIf list = let 
+    (a,b) = (splitWellNested ("if","then")list)
+    (c,d) = (splitWellNested ("if","else") a)
+    (e,f) = (splitWellNested ("else","then") a)
+    in case f of 
+        [] -> (c,d,b)
+        _ -> (e++["then"],tail f, b)
 
 --- The Evaluator
 --- -------------
@@ -160,16 +182,66 @@ eval (".":words) (i:istack, cstack, dict, out)
 eval (".":words) _ = underflow
 
 --- ### Printing the Stack
+eval (".S":words) (istack, cstack, dict, out)
+    = eval words (istack, cstack, dict, (intercalate " " $ map show (reverse istack)):out)
 
 --- ### Stack Manipulations
+-- 'dup'
+
+eval ("dup":words) ([], cstack, dict, out) = ([], cstack, dict, out)
+eval ("dup":words) (i:istack, cstack, dict, out) =
+    eval words (i:i:istack, cstack, dict, out)
+
+-- 'swap'
+eval("swap":words)(i:j:istack, cstack, dict, out) =
+    eval words (j:i:istack, cstack, dict, out)
+eval("swap":words) _ = underflow
+
+-- 'drop'
+eval ("drop":words)([], cstack, dict, out) = ([], cstack, dict, out)
+eval ("drop":words)(i:istack, cstack, dict, out) = 
+    eval words(istack, cstack, dict, out)
+
+-- 'rot'
+
+eval ("rot" :words)(i:j:k:istack, cstack, dict, out) =
+    eval words (k:i:j:istack, cstack, dict, out)
+
+eval ("rot" :words) _ = underflow
 
 --- ### User definitions
 
+eval (":":words)(istack, cstack, dict, out) = 
+    let
+        ((k:v), rest) = splitWellNested (":",";") words
+        hash = dinsert k (Def v) dict
+    in
+        eval rest (istack, cstack, hash, out)
+
 --- ### Conditionals
 
+eval ("if":words) (i:istack, cstack, dict, out) = 
+    let 
+        (tru, fal, thn) = splitIf words
+    in case i of 
+        0  -> eval (fal++thn) (istack, cstack, dict, out)
+        _  -> eval (tru++thn) (istack, cstack, dict, out)
+
 --- ### Loops
+eval ("begin":words)(istack, cstack, dict, out) = 
+    let (x, xs) = splitWellNested ("begin", "again") words
+    in eval x (istack, ("begin":x):xs:cstack, dict, out)
 
 --- ### Lookup in dictionary
+
+eval ("exit":words)(istack, cstack, dict, out) =
+    if(cstack == []) 
+        then underflow 
+        else 
+            case (head cstack) of
+                ("begin":res) -> eval [] (istack, (tail cstack), dict, out)
+                []            -> eval [] (istack, [], dict,out)
+                otherwise     -> eval ("exit":words) (istack, (tail cstack), dict, out)
 
 -- otherwise it should be handled by `dlookup` to see if it's a `Num`, `Prim`,
 -- `Def`, or `Unknown`
