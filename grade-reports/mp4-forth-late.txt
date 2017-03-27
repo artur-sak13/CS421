@@ -16,7 +16,7 @@ Pass: if command `if ... [else ...] then`
 Pass: loop command `begin ... again`
 
 Score: 100 / 100
-You have completed enough of the MP to get credit for the ML.
+All tests passed.
 
 
  ## Errors (if any) 

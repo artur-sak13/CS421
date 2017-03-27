@@ -16,7 +16,7 @@ Exception: if command `if ... [else ...] then`
 Fail [False,False,False]: loop command `begin ... again`
 
 Score: 66 / 100
-You have completed enough of the MP to get credit for the ML.
+Some tests failed.
 
 
  ## Errors (if any) 
