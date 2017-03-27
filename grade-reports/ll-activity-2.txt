@@ -1,19 +1,32 @@
+Looking for .cabal or package.yaml files to use to init the project.
+Using cabal packages:
+- code.cabal
+
+Selecting the best among 10 snapshots...
+
+* Matches lts-8.6
+
+Selected resolver: lts-8.6
+Initialising configuration using resolver: lts-8.6
+Total number of user packages considered: 1
+Writing configuration to file: stack.yaml
+All done.
 code-0.1.0.0: configure (lib + exe + test)
 Configuring code-0.1.0.0...
 code-0.1.0.0: build (lib + exe + test)
 Preprocessing library code-0.1.0.0...
-[1 of 1] Compiling Lib              ( src/Lib.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/Lib.o )
+[1 of 1] Compiling Lib              ( src/Lib.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.2.0/build/Lib.o )
 Preprocessing executable 'code-exe' for code-0.1.0.0...
-[1 of 1] Compiling Main             ( app/Main.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/code-exe/code-exe-tmp/Main.o )
-Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/code-exe/code-exe ...
+[1 of 1] Compiling Main             ( app/Main.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.2.0/build/code-exe/code-exe-tmp/Main.o )
+Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.2.0/build/code-exe/code-exe ...
 Preprocessing test suite 'code-test' for code-0.1.0.0...
-[1 of 1] Compiling Main             ( test/Spec.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/code-test/code-test-tmp/Main.o )
-Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.0.0/build/code-test/code-test ...
+[1 of 1] Compiling Main             ( test/Spec.hs, .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.2.0/build/code-test/code-test-tmp/Main.o )
+Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.2.0/build/code-test/code-test ...
 code-0.1.0.0: copy/register
 Installing library in
-/home/mattox/tmp/tmp.D3esV8MGsT/ll-activity-2/.stack-work/install/x86_64-linux-nopie/lts-7.17/8.0.1/lib/x86_64-linux-ghc-8.0.1/code-0.1.0.0-6kEZNp8a7UgHNg6zzfSvYv
+/home/mattox/tmp/tmp.GKDa24tCHK/ll-activity-2/.stack-work/install/x86_64-linux-nopie/lts-8.6/8.0.2/lib/x86_64-linux-ghc-8.0.2/code-0.1.0.0-LLVNTCG4o6GLKFh3v0mF3L
 Installing executable(s) in
-/home/mattox/tmp/tmp.D3esV8MGsT/ll-activity-2/.stack-work/install/x86_64-linux-nopie/lts-7.17/8.0.1/bin
+/home/mattox/tmp/tmp.GKDa24tCHK/ll-activity-2/.stack-work/install/x86_64-linux-nopie/lts-8.6/8.0.2/bin
 Registering code-0.1.0.0...
 code-0.1.0.0: test (suite: code-test)
 
@@ -22,14 +35,14 @@ Display Function:
 *** Failed! (after 1 test): 
 Exception:
   src/Lib.hs:(47,1)-(54,44): Non-exhaustive patterns in function parseE
-VarExp "q"
-(used seed -3325455389001983650)
+VarExp "ck"
+(used seed 8313988805853591316)
   Parser works for large expressions.: [Failed]
 *** Failed! (after 1 test): 
 Exception:
   src/Lib.hs:(47,1)-(54,44): Non-exhaustive patterns in function parseE
-VarExp "g"
-(used seed -8949539807276472309)
+VarExp "snc"
+(used seed -8448043461889233066)
 
          Properties  Total      
  Passed  0           0          
