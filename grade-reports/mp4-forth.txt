@@ -1,0 +1,29 @@
+
+
+ ## Standard Output 
+
+
+Running Tests
+=============
+Pass: `splitIf` parser
+Pass: show command `.S`
+Pass: stack manip command `dup`
+Pass: stack manip command `drop`
+Pass: stack manip command `swap`
+Pass: stack manip command `rot`
+Fail [False,True,True,True,True]: definition command `: ... ;`
+Exception: if command `if ... [else ...] then`
+Fail [False,False,False]: loop command `begin ... again`
+
+Score: 66 / 100
+Some tests failed.
+
+
+ ## Errors (if any) 
+
+
+
+Score: 66.0
+
+
+Late Score: 66.0
