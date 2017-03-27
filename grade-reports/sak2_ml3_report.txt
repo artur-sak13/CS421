@@ -1,0 +1,311 @@
+ 
+GRADE REPORT
+------------
+
+Student: sak2
+Assignment: ml3
+
+
+--- --- --- Score report: --- --- ---
+
+
+Running Tests
+=============
+Pass: isSimple tests
+Exception: cpsExp: Application expressions
+Exception: cpsExp: Simple If expressions
+Exception: cpsExp: Non-Simple If expressions
+Exception: cpsDecl tests
+
+Score: 20 / 100
+Some tests failed.
+
+
+--- --- --- Student submission: --- --- ---
+
+
+--- Given Code
+--- ==========
+
+module Main where
+
+import System.IO (hPutStrLn, hPutStr, stdout, hFlush)
+
+import Data.List (intercalate)
+
+import Data.Functor.Identity (Identity)
+import Text.ParserCombinators.Parsec hiding (Parser)
+import Text.Parsec.Prim (ParsecT)
+
+--- The Types
+--- ---------
+
+data Stmt = Decl String [String] Exp
+            deriving (Eq)
+
+instance Show Stmt where
+    show (Decl f params exp) = f ++ " " ++ intercalate " " params ++ " = " ++ (show exp)
+
+data Exp = IntExp Integer
+         | VarExp String
+         | LamExp String Exp
+         | IfExp Exp Exp Exp
+         | OpExp String Exp Exp
+         | AppExp Exp Exp
+         deriving (Eq)
+
+instance Show Exp where
+    show (VarExp s)       = s
+    show (IntExp i)       = show i
+    show (LamExp x e)     = "(\\" ++ x ++ " -> " ++ (show e) ++ ")"
+    show (IfExp e1 e2 e3) = "(if " ++ show e1 ++ " then " ++ show e2
+                            ++ " else " ++ show e3 ++ ")"
+    show (OpExp op e1 e2) = "(" ++ show e1 ++ " " ++ op ++ " " ++ show e2 ++ ")"
+    show (AppExp f e)     = show f ++ " " ++ show e
+
+ctorShow :: Exp -> String
+ctorShow (VarExp s)       = "VarExp " ++ show s
+ctorShow (IntExp i)       = "IntExp " ++ show i
+ctorShow (LamExp x e)     = "LamExp " ++ show x ++ " (" ++ ctorShow e ++ ")"
+ctorShow (IfExp e1 e2 e3) = "IfExp (" ++ ctorShow e1 ++ ") ("
+                                ++ ctorShow e2 ++ ") ("
+                                ++ ctorShow e3 ++ ")"
+ctorShow (OpExp op e1 e2) = "OpExp " ++ show op ++ " ("
+                                ++ ctorShow e1 ++ ") ("
+                                ++ ctorShow e2 ++ ")"
+ctorShow (AppExp f e)     = "AppExp (" ++ ctorShow f ++ ") (" ++ ctorShow e ++ ")"
+
+fromParse :: Either ParseError Exp -> Exp
+fromParse (Right exp) = exp
+fromParse (Left err)  = error $ show err
+
+ctorParse :: String -> String
+ctorParse = ctorShow . fromParse . parseExp
+
+--- The Parser
+--- ----------
+
+-- Pretty parser type
+type Parser = ParsecT String () Identity
+
+--- ### Lexicals
+
+symbol :: String -> Parser String
+symbol s = do string s
+              spaces
+              return s
+
+int :: Parser Integer
+int = do digits <- many1 digit <?> "an integer"
+         spaces
+         return (read digits :: Integer)
+
+var :: Parser String
+var = let keywords = ["if", "then", "else"]
+      in  try $ do v1 <- letter                  <?> "an identifier"
+                   vs <- many (letter <|> digit) <?> "an identifier"
+                   spaces
+                   let v = v1:vs
+                   if (any (== v) keywords)
+                    then fail "keyword"
+                    else return v
+
+oper :: Parser String
+oper = do op <- many1 (oneOf "+-*/<>=") <?> "an operator"
+          spaces
+          return op
+
+parens :: Parser a -> Parser a
+parens p = do symbol "("
+              pp <- p
+              symbol ")"
+              return pp
+
+--- ### Expressions
+
+intExp :: Parser Exp
+intExp = do i <- int
+            return $ IntExp i
+
+varExp :: Parser Exp
+varExp = do v <- var
+            return $ VarExp v
+
+opExp :: String -> Parser (Exp -> Exp -> Exp)
+opExp str = do symbol str
+               return (OpExp str)
+
+mulOp :: Parser (Exp -> Exp -> Exp)
+mulOp = opExp "*" <|> opExp "/"
+
+addOp :: Parser (Exp -> Exp -> Exp)
+addOp = opExp "+" <|> opExp "-"
+
+compOp :: Parser (Exp -> Exp -> Exp)
+compOp = try (opExp "<=") <|> try (opExp ">=")
+         <|> opExp "<"    <|> opExp ">"
+         <|> opExp "/="   <|> opExp "=="
+
+ifExp :: Parser Exp
+ifExp = do try $ symbol "if"
+           e1 <- expr
+           symbol "then"
+           e2 <- expr
+           symbol "else"
+           e3 <- expr
+           return $ IfExp e1 e2 e3
+
+lamExp :: Parser Exp
+lamExp = do try $ symbol "\\"
+            param <- var
+            symbol "->"
+            body <- expr
+            return $ LamExp param body
+
+atom :: Parser Exp
+atom =     intExp
+       <|> ifExp
+       <|> lamExp
+       <|> varExp
+       <|> parens expr
+
+expr :: Parser Exp
+expr = let arith  = term `chainl1` addOp
+           term   = factor `chainl1` mulOp
+           factor = app
+           app    = do f <- many1 atom
+                       return $ foldl1 AppExp f
+       in  arith `chainl1` compOp
+
+parseExp :: String -> Either ParseError Exp
+parseExp str = parse expr "stdin" str
+
+--- ### Declarations
+
+decl :: Parser Stmt
+decl = do f <- var
+          params <- many1 var
+          symbol "="
+          body <- expr
+          return $ Decl f params body
+
+parseDecl :: String -> Either ParseError Stmt
+parseDecl str = parse decl "stdin" str
+
+--- The REPL
+--- --------
+
+prompt :: String -> IO ()
+prompt str = hPutStr stdout str >> hFlush stdout
+
+printLn :: String -> IO ()
+printLn str = hPutStrLn stdout str >> hFlush stdout
+
+repl :: IO ()
+repl = do input <- prompt "> " >> getLine
+          case input of
+            "quit" -> return ()
+            _      -> do case parseDecl input of
+                            Left err    -> do printLn "Parse error!"
+                                              printLn $ show err
+                            Right decl  -> printLn . show $ cpsDecl decl
+                         repl
+
+
+main :: IO ()
+main = do putStrLn "Welcome to the CPS Transformer!"
+          repl
+          putStrLn "GoodBye!"
+
+
+--- Problems
+--- ========
+
+--- Manual Translation
+--- ------------------
+
+--- ### `factk :: Integer -> (Integer -> t) -> t`
+
+factk :: Integer -> (Integer -> t) -> t
+factk 0 k = k 1
+factk n k = factk (n-1) (\n' -> k $ n * n')
+
+--- ### `evenoddk :: [Integer] -> (Integer -> t) -> (Integer -> t) -> t`
+
+evenoddk :: [Integer] -> (Integer -> t) -> (Integer -> t) -> t
+evenoddk [i] ke ko
+    | even i = ke i
+    | odd  i = ko i
+evenoddk (i:is) ke ko
+    | even i = evenoddk is (\i' -> ke $ i + i') ko
+    | odd  i = evenoddk is ke (\i' -> ko $ i + i')
+
+--- Automated Translation
+--- ---------------------
+
+gensym :: Integer -> (String, Integer)
+gensym i = ("v" ++ show i, i + 1)
+
+--- ### Define `isSimple`
+
+isSimple :: Exp -> Bool
+
+isSimple (IntExp _)  = True
+isSimple (VarExp _) = True
+isSimple (LamExp _ _) = True
+isSimple (IfExp e1 e2 e3) = all isSimple [e1,e2,e3]
+isSimple (OpExp  _ e1 e2 )= isSimple e1 && isSimple e2
+isSimple (AppExp _ _) = False
+
+--- ### Define `cpsExp` - Overview
+
+cpsExp :: Exp -> Exp -> Integer -> (Exp, Integer)
+
+--- #### Define `cpsExp` for Integer and Variable Expressions
+
+cpsExp e@(IntExp _) k syms = (AppExp k e, syms)
+cpsExp e@(VarExp _) k syms = (AppExp k e, syms)
+
+--- #### Define `cpsExp` for Application Expressions
+
+--cpsExp (AppExp f e) k syms
+--        | isSimple e = (AppExp(AppExp f e) k syms)
+--        | otherwise  = let (v, s1) = gensym syms
+--                       in cpsExp e (LamExp v (AppExp f (VarExp v)) s1) 
+
+--- #### Define `cpsExp` for Operator Expressions
+
+cpsExp e@(OpExp op e1 e2) k syms
+    | isSimple e1 && isSimple e2 = (AppExp k e, syms)
+    | isSimple e1 = let (v,s2) = gensym syms
+                    in  cpsExp e2 (LamExp v (AppExp k (OpExp op e1 (VarExp v)))) s2
+    | isSimple e2 = let (v,s2) = gensym syms
+                    in  cpsExp e1 (LamExp v (AppExp k (OpExp op (VarExp v) e2))) s2
+    | otherwise   = let (v1,s2)  = gensym syms
+                        (v2,s3)  = gensym s2
+                        base     = LamExp v2 (AppExp k (OpExp op (VarExp v1) (VarExp v2)))
+                        (ce2,s4) = cpsExp e2 base s3
+                    in  cpsExp e1 (LamExp v1 ce2) s4
+
+--- #### Define `cpsExp` for If Expressions
+
+--cpsExp (IfExp e1 e2 e3) k n =
+--    case isSimple e1 of
+--        True -> let (ne1,n1) = cpsExp e2 k n
+--                    (ne2,n2) = cpsExp e3 k n1
+--                in cpsExp ne1 ne2 k  
+--        False -> let (v, n1) = gensym n
+--                     (ne1,n2) = cpsExp e2 k n1
+--                     (ne2,n3) = cpsExp e3 k n2 
+--                 in cpsExp (e1) (LamExp v (AppExp k (VarExp v) ne1 ne2) n3)
+
+--- ### Define `cpsDecl`
+
+cpsDecl :: Stmt -> Stmt
+cpsDecl = undefined
+--cpsDecl ss k = 
+--        let (v,s1) = genSym ss
+--        in [ss] ++ cpsDecl s1 k 
+
+
+
