@@ -1,9 +1,9 @@
 Grade report for Artur Sak
 Programming Languages (cs421) 2017-01
-Report generated 2017-03-30 14:05:23
+Report generated 2017-04-07 18:44:57
 
 
-Factors are {16: 0.0, 11: 4.0, 12: 1.0, 13: 8.0, 14: 6.0, 15: 0.0}
+Factors are {16: 0.0, 11: 4.0, 12: 2.0, 13: 8.0, 14: 6.0, 15: 0.0}
                    Assignment  Status Points / Max  Norm Weight% Points
 -----------------------------------------------------------------------
            Recursion - Exam 1  Graded     10 /  10 100.0    3.33   3.33
@@ -21,9 +21,9 @@ Algebraic Data Types - Exam 1  Graded     10 /  10 100.0    3.33   3.33
                Parsing - MP 5 Pending      0 / 100   0.0    0.00   0.00
                 Scheme - MP 6 Pending      0 / 100   0.0    0.00   0.00
        Type Inferencer - MP 7 Pending      0 / 100   0.0    0.00   0.00
-           Interpreter - ML 2  Graded     50 / 100  50.0   15.00   7.50
+           Interpreter - ML 2  Graded     50 / 100  50.0    7.50   3.75
                    CPS - ML 3 Dropped     20 / 100  20.0    0.00   0.00
-                 Forth - ML 4 Pending      0 / 100   0.0    0.00   0.00
+                 Forth - ML 4  Graded     60 / 100  60.0    7.50   4.50
                 Scheme - ML 5 Pending      0 / 100   0.0    0.00   0.00
               Gitlab Activity  Graded      1 /   1 100.0    0.62   0.62
            Recursion Activity  Graded      2 /   2 100.0    0.62   0.62
@@ -36,15 +36,14 @@ Algebraic Data Types - Exam 1  Graded     10 /  10 100.0    3.33   3.33
 
 
 
-Earned points so far:  40.46
+Earned points so far:  41.21
 Graded points so far:  55.00
-       Current score: 73.56%
-        Max possible: 85.46%
+       Current score: 74.92%
+        Max possible: 86.21%
 
  (Max possible does not take grade replacement from final into account.)
 If you believe there is an error that only affects you, please open an issue on your gitlab account.
 If you believe there is an error likely to be systemic, post a note on Piazza.
-Note: midterm 1 score entry will be completed on Friday.
 
 Notes:
 CPS - ML 3 was dropped.  Its score was 20.0%.
