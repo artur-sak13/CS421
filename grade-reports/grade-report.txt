@@ -1,19 +1,19 @@
 Grade report for Artur Sak
 Programming Languages (cs421) 2017-01
-Report generated 2017-04-07 18:44:57
+Report generated 2017-04-14 10:33:36
 
 
-Factors are {16: 0.0, 11: 4.0, 12: 2.0, 13: 8.0, 14: 6.0, 15: 0.0}
+Factors are {16: 0.0, 11: 4.0, 12: 2.0, 13: 8.0, 14: 7.0, 15: 0.0}
                    Assignment  Status Points / Max  Norm Weight% Points
 -----------------------------------------------------------------------
-           Recursion - Exam 1  Graded     10 /  10 100.0    3.33   3.33
+           Recursion - Exam 1  Graded     10 /  10 100.0    2.86   2.86
       Tail Recursion - Exam 1 Pending      0 /  10   0.0    0.00   0.00
-Algebraic Data Types - Exam 1  Graded     10 /  10 100.0    3.33   3.33
-        Writing HOFs - Exam 1  Graded      2 /  10  20.0    3.33   0.67
-          Using HOFs - Exam 1  Graded      9 /  10  90.0    3.33   3.00
-     Lambda Calculus - Exam 1 Pending      0 /  10   0.0    0.00   0.00
-       Continuations - Exam 1  Graded     10 /  10 100.0    3.33   3.33
-        Type Classes - Exam 1  Graded      2 /  10  20.0    3.33   0.67
+Algebraic Data Types - Exam 1  Graded     10 /  10 100.0    2.86   2.86
+        Writing HOFs - Exam 1  Graded      2 /  10  20.0    2.86   0.57
+          Using HOFs - Exam 1  Graded      9 /  10  90.0    2.86   2.57
+     Lambda Calculus - Exam 1  Graded     10 /  10 100.0    2.86   2.86
+       Continuations - Exam 1  Graded     10 /  10 100.0    2.86   2.86
+        Type Classes - Exam 1  Graded      2 /  10  20.0    2.86   0.57
                Haskell - MP 1  Graded    100 / 100 100.0    3.75   3.75
            Interpreter - MP 2  Graded    100 / 100 100.0    3.75   3.75
                    CPS - MP 3  Graded    100 / 100 100.0    3.75   3.75
@@ -36,10 +36,10 @@ Algebraic Data Types - Exam 1  Graded     10 /  10 100.0    3.33   3.33
 
 
 
-Earned points so far:  41.21
+Earned points so far:  42.02
 Graded points so far:  55.00
-       Current score: 74.92%
-        Max possible: 86.21%
+       Current score: 76.40%
+        Max possible: 87.02%
 
  (Max possible does not take grade replacement from final into account.)
 If you believe there is an error that only affects you, please open an issue on your gitlab account.
