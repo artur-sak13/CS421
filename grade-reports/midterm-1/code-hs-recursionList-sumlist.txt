@@ -1,0 +1,15 @@
+Problem grade report.
+Problem slug: code-hs-recursionList-sumlist
+Netid: sak2
+
+Your Submission:
+
+----------------------------------------
+sumlist []     = 0
+sumlist (x:xs) = x + sumlist xs
+----------------------------------------
+
+Grading and comments
+Max score: 10
+Correct (0)
+Final score: 10
