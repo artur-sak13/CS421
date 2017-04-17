@@ -126,7 +126,7 @@ getFirstSet = undefined
 
 -- first fs symbols
 -- return the first set of a set of symbols
-first :: S.HashSet Symbol -> [Symbol] -> S.HashSet Symbol
+first :: H.HashMap Symbol (S.HashSet Symbol) -> [Symbol] -> S.HashSet Symbol
 first  = undefined
 
 -- isLL
