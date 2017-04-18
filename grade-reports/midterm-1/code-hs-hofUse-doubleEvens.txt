@@ -14,5 +14,5 @@ doubleEvens l =
 
 Grading and comments
 Max score: 10
-Did not need to specify the argument for the curried function (-1)
-Final score: 9
+Did not need to specify the argument for the curried function (0)
+Final score: 10
