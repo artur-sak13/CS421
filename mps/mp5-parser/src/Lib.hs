@@ -13,6 +13,7 @@ import Text.Parsec.Char
 import GHC.Generics (Generic)
 import Data.Hashable
 import Data.List (intercalate)
+import Debug.Trace
 
 -- The Types
 
@@ -71,29 +72,44 @@ ident = do i <- try $ do ii <- many1 (oneOf (['a'..'z'] ++ ['A'..'Z'])) <?> "an 
 
 -- realIdent - like ident, but returns it as a Symbol
 realIdent :: Parser Symbol
-realIdent = undefined
-
+realIdent = do t <- ident <?> "an identifier"
+               _ <- inlinews
+               return (Symbol t)
 -- epsilon - parse "eps" or "ε" returning Epsilon
 epsilon :: Parser Symbol
-epsilon = undefined
+epsilon = do _ <- (string "ε" <|> string "eps") <?> "an epsilon"
+             _ <- inlinews
+             return Epsilon
 
 -- epsilonLine - parse a production that only has an epsilon in it.
 epsilonLine :: Parser [Symbol]
-epsilonLine = undefined
+epsilonLine = do _ <- epsilon
+                 _ <- endOfLine
+                 return [Epsilon]
 
 -- tokenLine - parse a production that is not an epsilon.
 tokenLine :: Parser [Symbol]
-tokenLine = undefined
+tokenLine = do tt <- many1 realIdent
+               _ <- endOfLine
+               return tt
 
 -- initialProduction - parse an initial production line
 initialProduction :: Parser (String,[Symbol])
-initialProduction = undefined
+initialProduction = do s <- ident
+                       _ <- stringws "->"
+                       tt <- epsilonLine <|> tokenLine
+                       return (s,tt)
 
 continueProduction :: Parser [Symbol]
-continueProduction = undefined
+continueProduction = do try $ do _ <- inlinews
+                                 stringws "|"
+                        res <- epsilonLine <|> tokenLine
+                        return res
 
 production :: Parser Production
-production = undefined
+production = do (s,x) <- initialProduction
+                xs <- many continueProduction
+                return (Production s (x:xs))
 
 grammar :: Parser Grammar
 grammar = do p <- many1 production
@@ -105,13 +121,14 @@ p1 = "S -> x S y\n | z q Y\nY -> x Y y \n| eps\n"
 -- Some analysis
 
 nonTerminals :: [Production] -> S.HashSet Symbol
-nonTerminals _ = S.empty
+nonTerminals g = S.fromList $ map (\ (Production s _) -> Symbol s) g
 
 symbols :: [Production] -> S.HashSet Symbol
-symbols _ = S.empty
+symbols [] = S.empty
+symbols ((Production s xx):ps) = S.union (S.insert (Symbol s) $ S.fromList (concat xx)) (symbols ps)
 
 terminals :: [Production] -> S.HashSet Symbol
-terminals _ = S.empty
+terminals g = S.difference (symbols g) (nonTerminals g)
 
 fix f x =
   if x == result
@@ -122,14 +139,51 @@ fix f x =
 -- getFirstSet grammar
 -- calculate the first sets of the nonterminals in a grammar
 getFirstSet :: Grammar -> H.HashMap Symbol (S.HashSet Symbol)
-getFirstSet = undefined
+getFirstSet (Grammar psets nonterminals terminals) =
+     fix aux initial
+     where initial = H.fromList (zip (S.toList nonterminals) (repeat S.empty))
+           aux fs = undefined
 
 -- first fs symbols
 -- return the first set of a set of symbols
 first :: H.HashMap Symbol (S.HashSet Symbol) -> [Symbol] -> S.HashSet Symbol
-first  = undefined
+first fs []                = S.empty
+first fs ((Symbol s):syms) =
+    let fs_t = S.union (H.lookupDefault S.empty (Symbol s) fs) (S.singleton (Symbol s))
+    in if S.member Epsilon fs_t && not (null syms)
+     then S.union (S.delete Epsilon fs_t) (first fs syms)
+     else if S.member Epsilon fs_t && (null syms)
+       then S.union fs_t (first fs syms)
+       else fs_t
+
+-- updateDefault :: (Eq k, Symbol k) => (v -> v) -> v -> k -> H.HashMap k v -> H.HashMap k v
+-- updateDefault d k m =
+--   case H.lookup k m of
+--     Nothing -> H.insert k (first m d)
+--     Just v2 -> H.insert k (first m v2)
+
+-- updateFirst :: H.HashMap Symbol (S.HashSet Symbol) -> [Symbol] -> H.HashMap Symbol (S.HashSet Symbol)
+-- updateFirst fs ((Symbol s):syms) = updateDefault(S.empty (Symbol s) fs)
+
+-- mkset :: [String] -> S.HashSet Symbol
+-- mkset xx = S.fromList $ map (\x -> if x == "eps" then Epsilon else Symbol x) xx
+--
+-- mkhash :: [(String,[String])] -> H.HashMap Symbol (S.HashSet Symbol)
+-- mkhash = foldr (\(s,items) hs -> H.insert (Symbol s) (mkset items) hs) H.empty
+--
+-- ll1 = "S -> x\n"
+-- g_ll1 = run grammar ll1
+-- fs_ll1 = mkhash [("S",["x"])]
+--
+-- --
+-- syms5 = map Symbol [ "A",  "B"]
+--
+-- fs3 = mkhash [("A",["eps", "d"])
+--              ,("B",["c"])]
+-- fs4 = mkhash [("A",["eps"])
+--              ,("B",["eps", "c"])]
+
 
 -- isLL
 isLL :: Grammar -> Bool
-isLL g = undefined
-
+isLL g = True
