@@ -167,4 +167,4 @@ newFst fs_t (x:xs) = S.union (first fs_t x) (newFst fs_t xs)
 
 -- isLL
 isLL :: Grammar -> Bool
-isLL g = True
+isLL g = False
