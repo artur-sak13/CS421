@@ -167,4 +167,31 @@ newFst fs_t (x:xs) = S.union (first fs_t x) (newFst fs_t xs)
 
 -- isLL
 isLL :: Grammar -> Bool
-isLL g = False
+isLL g = let (Grammar psets terminals nonterminals) = g
+  in ((hasCommonPrefix psets) && not(isLeftRecursive g))
+
+isLeftRecursive g =
+  let hshmp = (getFirstSet g)
+      keys = H.keys hshmp
+      in checkKeys hshmp keys
+
+
+checkKeys fs (k:ks) =
+  case H.lookup k fs of
+    Nothing -> False
+    Just st  -> if S.member k st
+      then True
+      else if not(null ks)
+        then False || (checkKeys fs ks)
+        else False
+
+
+
+hasCommonPrefix ((Production s xx):ps) =
+  let syms =  S.fromList((concat xx))
+      k    = S.singleton (Symbol s)
+  in if not (null (S.intersection k syms))
+      then True
+      else if not(null ps)
+        then False || (hasCommonPrefix ps)
+        else False
