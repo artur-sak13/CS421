@@ -148,7 +148,8 @@ getFirstSet (Grammar psets terminals nonterminals) =
 -- first fs symbols
 -- return the first set of a set of symbols
 first :: H.HashMap Symbol (S.HashSet Symbol) -> [Symbol] -> S.HashSet Symbol
-first fs []                = S.empty
+first fs []                = S.singleton Epsilon
+first fs (Epsilon:syms)    = first fs syms
 first fs ((Symbol s):syms) =
     let fs_t = S.union (H.lookupDefault S.empty (Symbol s) fs) (S.singleton (Symbol s))
     in if S.member Epsilon fs_t && not (null syms)
