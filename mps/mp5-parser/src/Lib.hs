@@ -155,11 +155,6 @@ first fs ((Symbol s):syms) =
      then S.union (S.delete Epsilon fs_t) (first fs syms)
      else fs_t
 
-updateDefault k d v2 fs =
-  case H.lookup k fs of
-    Nothing -> H.insert k (S.union d v2) fs
-    Just v1 -> H.insert k (S.union v1 v2) fs
-
 updateFirst fs (Production s xx) =
   case H.lookup (Symbol s) fs of
     Nothing -> fs
