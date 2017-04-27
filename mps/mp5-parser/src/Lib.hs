@@ -14,6 +14,7 @@ import GHC.Generics (Generic)
 import Data.Hashable
 import Data.List (intercalate)
 import Debug.Trace
+import Data.Typeable
 
 -- The Types
 
@@ -139,10 +140,10 @@ fix f x =
 -- getFirstSet grammar
 -- calculate the first sets of the nonterminals in a grammar
 getFirstSet :: Grammar -> H.HashMap Symbol (S.HashSet Symbol)
-getFirstSet (Grammar psets nonterminals terminals) =
+getFirstSet (Grammar psets terminals nonterminals) =
      fix aux initial
      where initial = H.fromList (zip (S.toList nonterminals) (repeat S.empty))
-           aux fs = undefined
+           aux fs = foldl updateFirst fs psets
 
 -- first fs symbols
 -- return the first set of a set of symbols
@@ -152,36 +153,20 @@ first fs ((Symbol s):syms) =
     let fs_t = S.union (H.lookupDefault S.empty (Symbol s) fs) (S.singleton (Symbol s))
     in if S.member Epsilon fs_t && not (null syms)
      then S.union (S.delete Epsilon fs_t) (first fs syms)
-     else if S.member Epsilon fs_t && (null syms)
-       then S.union fs_t (first fs syms)
-       else fs_t
+     else fs_t
 
--- updateDefault :: (Eq k, Symbol k) => (v -> v) -> v -> k -> H.HashMap k v -> H.HashMap k v
--- updateDefault d k m =
---   case H.lookup k m of
---     Nothing -> H.insert k (first m d)
---     Just v2 -> H.insert k (first m v2)
+updateDefault k d v2 fs =
+  case H.lookup k fs of
+    Nothing -> H.insert k (S.union d v2) fs
+    Just v1 -> H.insert k (S.union v1 v2) fs
 
--- updateFirst :: H.HashMap Symbol (S.HashSet Symbol) -> [Symbol] -> H.HashMap Symbol (S.HashSet Symbol)
--- updateFirst fs ((Symbol s):syms) = updateDefault(S.empty (Symbol s) fs)
+updateFirst fs (Production s xx) =
+  case H.lookup (Symbol s) fs of
+    Nothing -> fs
+    Just v1 -> H.insert (Symbol s) (S.union v1 (newFst fs xx)) fs
 
--- mkset :: [String] -> S.HashSet Symbol
--- mkset xx = S.fromList $ map (\x -> if x == "eps" then Epsilon else Symbol x) xx
---
--- mkhash :: [(String,[String])] -> H.HashMap Symbol (S.HashSet Symbol)
--- mkhash = foldr (\(s,items) hs -> H.insert (Symbol s) (mkset items) hs) H.empty
---
--- ll1 = "S -> x\n"
--- g_ll1 = run grammar ll1
--- fs_ll1 = mkhash [("S",["x"])]
---
--- --
--- syms5 = map Symbol [ "A",  "B"]
---
--- fs3 = mkhash [("A",["eps", "d"])
---              ,("B",["c"])]
--- fs4 = mkhash [("A",["eps"])
---              ,("B",["eps", "c"])]
+newFst fs_t [] = S.empty
+newFst fs_t (x:xs) = S.union (first fs_t x) (newFst fs_t xs)
 
 
 -- isLL
