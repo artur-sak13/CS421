@@ -1,10 +1,14 @@
 MP6 - Scheme
 ============
 
+<!-- Note: please compile the md like this:
+pandoc -t latex -o README.pdf README.md --latex-engine=xelatex --variable monofont="DejaVu Sans Mono"
+-->
+
 Logistics
 ---------
 
--   revision: 1.0
+-   revision: 1.1 - Revised documentation for clarity
 -   release date: April 26, 2017
 -   due date: May 3, 2017 (end of day)
 
@@ -109,7 +113,7 @@ functions like `lookup`, `union` and `insert` through prefix `H`, such as: `H.lo
 type Env = H.HashMap String Val
 ```
 
-### AST
+### Abstract Syntax Tree
 
 Now we offer you the Scheme AST. From your previous experience, do you notice anything unusual? 
 
@@ -136,6 +140,8 @@ Expressions from the programmer are now encoded as values: numbers, booleans, sy
 and lists. When you feed such a value to the evaluator, the evaluator treats it
 as an expression and evaluates it!
 
+Now we'll describe what the different values mean, and provide some examples.
+
 ### Kinds of values
 
 1. `Symbol`
@@ -152,30 +158,43 @@ as an expression and evaluates it!
 3. `Number`
    
     An integer. We do not support floating point in this MP.
+
+$~$
     
 4. `List`
 
-    A `List` is a list of values.
+    A `List` (that is, a "proper" Scheme list; keep reading!) is a list of values
+    terminated by an empty proper list. Scheme _theoretically_ would define lists using
+    _pairs_ recursively, like this: a proper list would be a pair with a single item on the left
+    and another proper list on the right. As a base case, there would be the special empty list `()`,
+    which might be called "nil" or "null". However, we can get a speed advantage by simply
+    using Haskell's native lists to implement our version of Scheme lists.
+
+    In Scheme syntax, a proper list could be created like `(1 2 3)` or equivalently
+    like `(1 . (2 . (3 . () )))` where the `.` is a pair separator.
   
 5. `DottedList`
 
-    A `DottedList` is a list of values ended by a non-null tail value (e.g. `(1 2 . 3)`).
-    This distinction is an implementation detail for efficiency; dotted lists may occur
-    as an intermediate state as a list is processed.
+    Because Scheme theoretically uses pairs to make lists, we have a dilemma: what if the
+    "list" isn't formed correctly as described above? A `DottedList` potentially represents
+    an "improper" list of values: it can be ended by some _non-null_ tail value (e.g. `(1 2 . 3)`).
+    This is theoretically what you would get in Scheme if you kept nesting pairs on the right side
+    of pairs, but where the rightmost nested item was _not_ the empty list value, but some other value.
+    In our implementation using Haskell, we make a type distinction between these "improper" dotted
+    lists and the "proper" null-terminated lists, defining separate constructors: the `DottedList`
+    constructor allows the trailing non-null value to be specified explicitly.
 
-    In Scheme, a list or a dotted list resembles a linked list, each cell of
-    which is called a "cons cell". While we could totally define list as a chain
-    of `Cons Val Val` and a `Null`, here we utilize Haskell's list data
-    structure to reduce performance overhead and simplify the implementation of
-    some primitive routines. *Linked lists are bad!*
+    This distinction allows us to utilize Haskell's native list data structure for better
+    performance. This will also simplify our implementation of some other Scheme routines.
 
-    Just because `DottedList` resembles a linked list, lists and dotted lists
-    that are constructed differently can be equivalent by value. We offer you a
-    useful helper function - `flattenList`, which flattens a `DottedList` to the
-    simplest form, which can be a `List` or a `DottedList`. You will find it
+    However, because `DottedList` might be used to provide a null list as the trailing
+    value, lists and dotted lists that are constructed differently can be equivalent by value.
+    We offer you a useful helper function - `flattenList`, which flattens a `DottedList` to the
+    simplest form, which might convert to a `List` or remain a `DottedList`. You will find it
     extremely useful when implementing primitive functions in the runtime.
 
-    Here are some examples illustrating the value equivalence of lists.
+    For example, here are the results of flattening some proper and improper lists.
+    The third example is improper, so it remains a dotted list after flattening.
 
     | Nested               | Flattened   |
     |----------------------|-------------|
@@ -184,6 +203,8 @@ as an expression and evaluates it!
     | `(1 . (2 . 3))`      | `(1 2 . 3)` |
     | `(1 . (2 . 3 . ()))` | `(1 2 3)`   |
     | `(1 . (2 3))`        | `(1 2 3)`   |
+
+$~$
 
 6. `PrimFunc`
 
@@ -212,6 +233,25 @@ as an expression and evaluates it!
     The evaluator returns a value for every expression. Void is a special return
     type of the `(define ...)` and `(define-macro ...)` special forms. It does not
     represent any data.
+
+### Example ASTs for Values
+
+This table illustrates how some Scheme expressions are represented using our AST constructors
+of `Val` type.
+You can see how these are parsed for you in the `app/Scheme/Parse.hs` file.
+The quote expressions are explained later in the MP.
+
+| Scheme expression  | Haskell AST representation                                          |
+|--------------------|---------------------------------------------------------------------|
+| `1`                | `Number 1`                                                          |
+| `a`                | `Symbol a`                                                          |
+| `#t`               | `Boolean True`                                                      |
+| `#f`               | `Boolean False`                                                     |
+| `(define (f x) x)` | `List [Symbol "define", List [Symbol "f",`                          |
+| &nbsp;             | &nbsp;&nbsp;`Symbol "x"], Symbol "x"]`                              |
+| `'1`               | `List [Symbol "quote", Number 1]`                                   |
+| `` `,a  ``         | `List [Symbol "quasiquote",`                                        |
+| &nbsp;             | &nbsp;&nbsp;`List [Symbol "unquote",  Symbol "a"]]`                 |
     
 ### Diagnostic
 
@@ -338,7 +378,10 @@ Execution
 ### Problem 1. REPL
 
 You'll have to fill in parts of the REPL function from `Main.hs`, implementing
- cases for each of the possible results of evaluation. `repl :: Env -> IO ()`. 
+cases for each of the possible results of evaluation. `repl :: Env -> IO ()`. 
+
+Our call to the function `runExcept` returns type `Either Diagnostic (Val, Env)`,
+where the `Either` type's `Right` pair represents the result value and new environment.
 
 ``` {.haskell}
 repl :: Env -> IO ()
@@ -430,6 +473,8 @@ $$
          {{[\![(define\ x\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{Void}}}
 $$
 
+$~$
+
 ``` {.scheme}
 scheme> (define x (+ 10 20))
 scheme> x
@@ -444,42 +489,49 @@ We've already given you the ability to define functions. This has the form
 `(define (f params) body)`. The parameters, body, and environment when the
 function is declared get wrapped into a `Func` value. It uses `get` to retrieve
 the environment from the state monad, and `modify` to mutate the state. A `Func`
-value is also a normal form.
+value is also a normal form. (Note: These functions do not allow for recursion.
+But that makes your job easier.)
 
-The semantics for this can be given as follows. (Note: These functions do not
-allow for recursion.)
-
-$$ ps = (p_1 \cdots p_n) \qquad $$
+The semantics for this can be given as follows. The notation $valid(p_1 \cdots p_n)$ means that
+parameters $p_1 \cdots p_n$ (such as might be labeled `x y z` in `f x y z`, for example) must
+be a proper list of `Symbol`s, implemented with type List [Symbol].
 
 <!---
+$$ ps = p_1 \cdots p_n \qquad $$
+
   $${\sigma}' = {\sigma}{\ \cup\ }\{f \mapsto {\texttt{Func}}\ ps\ e\ {\sigma}'\} $$
 -->
 
 $$
-    {[\![(define\ (f\ ps)\ e) \mid {\sigma}]\!]}
-    {\ \Downarrow \ }{\texttt{Func}}\ ps\ e\ {\sigma}'
-    {\ \bigm\vert \ }valid(ps)
+    {[\![(\texttt{define}\ (f\ p_1 \cdots p_n)\ e) \mid {\sigma}]\!]}
+    {\ \Downarrow \ }{\texttt{Func}}\ p_1 \cdots p_n\ e\ {\sigma}'
+    {\ \bigm\vert \ }valid(p_1 \cdots p_n)
 $$
 
 $$
-    {[\![(define\ (f \ ps)\ e) \mid {\sigma}]\!]}
+    {[\![(\texttt{define}\ (f \ p_1 \cdots p_n)\ e) \mid {\sigma}]\!]}
     {\ \Downarrow \ }{\texttt{InvalidSpecialForm}}
-    {\ \bigm\vert \ }\lnot valid(ps)
+    {\ \bigm\vert \ }\lnot valid(p_1 \cdots p_n)
 $$
+
+$~$
 
 What you want to implement is a lambda-function form, `(lambda (params) body)`,
 which also evaluates to a `Func`. The lambda creates an anonymous function to be
 used as a value, although it does not necessarily define it as part of the
 environment.
 
-$$ {[\![(lambda\ (ps)\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{Func}}\ ps\ e\ {\sigma}{\ \bigm\vert \ }valid(ps) $$
+$$ {[\![(\texttt{lambda}\ (p_1 \cdots p_n)\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{Func}}\ p_1 \cdots p_n\ e\ {\sigma}{\ \bigm\vert \ }valid(p_1 \cdots p_n) $$
 
-$$ {[\![(lambda\ (ps)\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{InvalidSpecialForm}} {\ \bigm\vert \ }\lnot valid(ps) $$
+$$ {[\![(\texttt{lambda}\ (p_1 \cdots p_n)\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{InvalidSpecialForm}} {\ \bigm\vert \ }\lnot valid(p_1 \cdots p_n) $$
 
+$~$
 
 ``` {.scheme}
 scheme> (define x 1)
 scheme> (define (inc y) (+ y x))
+scheme> inc
+#<function:(λ (y) ...)>
 scheme> (inc 10)
 11
 scheme> (define x 2)
@@ -489,7 +541,7 @@ scheme> (define (add x y) (+ x y))
 scheme> (add 3 4)
 7
 scheme> (lambda (x) (+ x 10))
-#<function:(lambda (x) ...)>
+#<function:(λ (x) ...)>
 scheme> ((lambda (x) (+ x 10)) 20)
 30
 scheme> (define (mkInc x) (lambda (y) (+ x y)))
@@ -504,8 +556,8 @@ scheme> (fact 5)
 #### Problem 6. Special form `cond`
 
 We should have some sort of if expression, because that's useful. Define the
-`(cond ((c1 e1) ... (cn en)))` form. If `c1` is true, then `e1` is evaluated. If
-it's false the next condition should be tried. 
+`(cond (c1 e1) ... (cn en))` form. If `c1` is not false, then `e1` is evaluated.
+If it's false the next condition should be tried.
 
 The last condition, `cn`, can optionally be symbol `else`. The expression
 following `else` will be evaluated when all previous conditions evaluate to
@@ -513,8 +565,9 @@ false. If `else` appears in one of the conditions that is not the last
 condition, it's an invalid special form (throw an error). If conditions are not
 exhaustive, i.e. when all conditions evaluate to false, return `Void`.
 
-$$ {[\![(cond\ ()) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{ Void }}
-     $$
+Note that you are given the function `getListOf2` in `Eval.hs` which can be used
+to verify that a Scheme list has length of two, and then returns a Haskell pair.
+
 <!---
 
 \qquad {[\![(cond\ (() \cdots)) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{ Diagnostic }}
@@ -524,19 +577,29 @@ $$ {[\![(cond\ ((e) \cdots)) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{ Diagn
 -->
 
 $$
-    \frac{{[\![e \mid {\sigma}]\!]} {\ \Downarrow \ }}
-         {{[\![(cond\ ((else\ e)) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+    {{[\![(\operatorname{cond}) \mid {\sigma}]\!]} {\ \Downarrow \ }\texttt{InvalidSpecialForm}}
+$$
+
+$$
+    \frac{{[\![e \mid {\sigma}]\!]} {\ \Downarrow \ v}}
+         {{[\![(\operatorname{cond}\ (\operatorname{else}\ e)) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
 $$
 
 $$
     \frac{{[\![c_1 \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{Truthy}} \qquad {[\![e_1 \mid {\sigma}]\!]} {\ \Downarrow \ }v_1}
-         {{[\![(cond\ ((c_1\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }v_1} \textrm{where Truthy is any non-False value}
+         {{[\![(\operatorname{cond}\ (c_1\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }v_1} \textrm{\quad where Truthy is any non-False value and $n\geq 1$}
 $$
 
 $$
-    \frac{{[\![c_1 \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{False}} \qquad {[\![(cond\ ((c_2\ e_2) \cdots (c_n\ e_n))) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
-         {{[\![(cond\ ((c_1\ e_1) \cdots (c_n\ e_n))) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+    \frac{{[\![c_1 \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{False}} \qquad {[\![(\operatorname{cond}\ (c_2\ e_2) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+         {{[\![(\operatorname{cond}\ (c_1\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }v} \textrm{\quad where $n \geq 1$}
 $$
+
+$$
+    {{[\![(\operatorname{cond}\ (\operatorname{else}\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }\texttt{InvalidSpecialForm}}
+$$
+
+$~$
 
 ``` {.scheme}
 scheme> (cond ((> 4 3) 'a) ((> 4 2) 'b))
@@ -555,12 +618,18 @@ environment that `body` is evaluated in. You'll need to check that the
 expressions being bound (the `(x1 e1) ... (xn en)`) are well-formed (they are a
 form with two entries, the first being a variable name).
 
+Note that in `Eval.hs` you are given a function `getBinding` which checks if
+a single $(x_i\ e_i)$ clause of a `let` or `let*` is a proper list where the
+first element is a symbol, which is evaluated to a `String`; then, it evaluates
+the second element to a `Val`, and returns a Haskell tuple of type `(String, Val)`.
 
 $$
     \frac{{[\![e_1 \mid {\sigma}]\!]} {\ \Downarrow \ }v_1 \cdots {[\![e_n \mid {\sigma}]\!]} {\ \Downarrow \ }v_n
             \qquad {[\![e \mid {\sigma}{\ \cup\ }\bigcup_{i=1}^n \{x_i \mapsto v_i\}]\!]} {\ \Downarrow \ }v}
          {{[\![(let\ ((x_1\ e_1) \cdots (x_n\ e_n))\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
 $$
+
+$~$
 
 ``` {.scheme}
 scheme> (let ((x 5) (y 10)) (+ x y))
@@ -590,6 +659,8 @@ $$
             \qquad {[\![e \mid {\sigma}{\ \cup\ }\bigcup_{i=1}^n \{x_i \mapsto v_i\}]\!]} {\ \Downarrow \ }v}
          {{[\![(let\ ((x_1\ e_1) \cdots (x_n\ e_n))\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
 $$
+
+$~$
 
 ``` {.scheme}
 scheme> (let* ((x 5) (y (+ x 5))) (+ x y))
@@ -686,17 +757,17 @@ pieces _without evaluating them_, and get the resulting syntax blob. Then,
 we feed the result back into the evaluator to get the final result. In essence,
 macros use lazy evaluation.
 
-$$ ps = (p_1 \cdots p_n) $$
+$$ ps = p_1 \cdots p_n $$
 
 $$
-    {[\![(define-macro\ f \ ps\ e) \mid {\sigma}]\!]}
+    {[\![(\texttt{define-macro}\ (f \ ps)\ e) \mid {\sigma}]\!]}
     {\ \Downarrow \ }{\texttt{Macro}}\ ps\ e\ {\sigma}'\
     {\ \bigm\vert \ }valid(ps)
 $$
 
 $$
-    {[\![(define-macro\ f \ ps\ e) \mid {\sigma}]\!]}
-    {\ \Downarrow \ }{\texttt{Diagnostic}}
+    {[\![(\texttt{define-macro}\ (f \ ps)\ e) \mid {\sigma}]\!]}
+    {\ \Downarrow \ }{\texttt{InvalidSpecialForm}}
     {\ \bigm\vert \ }\lnot valid(ps)
 $$
 
@@ -838,6 +909,8 @@ runtime = H.fromList [ ("+", liftIntVargOp (+) 0)
 
 We have provided the following translators to go between Scheme values and
 Haskell values. These can help when defining the various operator lifters.
+(Note that these take their single arguments in a Haskell list. See Problem 20
+for more information.)
 
 ``` {.haskell}
 -- Primitive function `symbol?` predicate
@@ -853,6 +926,19 @@ isList [v] =
     List _ -> True
     _ -> False
 isList vv = throwError $ UnexpectedArgs vv
+```
+
+By the way, many of the provided stubs for the runtime problems use `const` to
+create a curried function that will discard a provided parameter and throw an error
+instead. For example:
+
+``` {.haskell}
+Prelude> foo x = "hi"
+Prelude> foo 1
+"hi"
+Prelude> foo = const $ "hi"
+Prelude> foo 1
+"hi"
 ```
 
 You can test your `runtime` using the REPL. Implement the REPL first!
@@ -1103,13 +1189,26 @@ scheme> (abs (- 5))
 5
 ```
 
-#### Problem 20. Dynamic Type Tests (`symbol?`, `list?`, `pair?`, `number?`, `boolean?`, `null?`)
+#### Problem 20. Type Predicates (`symbol?`, `list?`, `pair?`, `number?`, `boolean?`, `null?`)
 
-A check that takes exactly one argument of any type, and returns whether the
-argument is of the corresponding type. The less obvious tests here are the
-`list?` test, which checks whether a "flattened" version of the list is really
-a list, the `pair?` test, which accepts either lists or dotted lists, and the
-`null?` test, which checks for an empty list.
+(Recall that a "predicate" is a function that returns a Boolean value.)
+These functions check whether a data element is of the corresponding type.
+They must take a single argument, but contained in a Haskell list of type `[Val]`,
+so that they are compatible with the AST constructor `PrimFunc`.
+We already showed you how to implement `symbol?` and `list?` earlier in this document!
+Check those out for hints.
+
+  * `symbol?` Checks whether the input is a `Symbol`.
+
+  * `list?` Checks whether a "flattened" version of the list is really a proper list
+      (not a dotted list or something else)
+
+  * `pair?` Accepts either proper Scheme lists or dotted lists, nothing else. (Remember,
+      in Scheme, both proper lists and improper "dotted" lists are technically types of pairs.)
+
+  * `null?` Checks for an empty, proper list.
+
+  * `number?` Checks whether the input is a `Number`.
 
 ``` {.scheme}
 scheme> (symbol? 'a)
