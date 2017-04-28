@@ -1,3 +1,6 @@
+<!-- this command won't work unless it's put in a template separately -->
+$\newcommand{\evalNotation}[4]{[\![ #1 \mid #2 ]\!] \Downarrow \langle #3 \mid #4 \rangle}$
+
 MP6 - Scheme
 ============
 
@@ -8,9 +11,11 @@ pandoc -t latex -o README.pdf README.md --latex-engine=xelatex --variable monofo
 Logistics
 ---------
 
+-   revision: 1.3 - Corrected various semantics; showed more environment state changes
+-   revision: 1.2 - Bugfix in `cond` rules; typesetting edited
 -   revision: 1.1 - Revised documentation for clarity
 -   release date: April 26, 2017
--   due date: May 3, 2017 (end of day)
+-   due date: May 12, 2017 (end of day) - No later submissions!
 
 Objectives
 ----------
@@ -142,6 +147,8 @@ as an expression and evaluates it!
 
 Now we'll describe what the different values mean, and provide some examples.
 
+$\pagebreak$
+
 ### Kinds of values
 
 1. `Symbol`
@@ -158,8 +165,6 @@ Now we'll describe what the different values mean, and provide some examples.
 3. `Number`
    
     An integer. We do not support floating point in this MP.
-
-$~$
     
 4. `List`
 
@@ -204,8 +209,6 @@ $~$
     | `(1 . (2 . 3 . ()))` | `(1 2 3)`   |
     | `(1 . (2 3))`        | `(1 2 3)`   |
 
-$~$
-
 6. `PrimFunc`
 
     A primitive function is a function defined in Haskell, lifted to Scheme. The
@@ -233,6 +236,8 @@ $~$
     The evaluator returns a value for every expression. Void is a special return
     type of the `(define ...)` and `(define-macro ...)` special forms. It does not
     represent any data.
+
+$\pagebreak$
 
 ### Example ASTs for Values
 
@@ -358,6 +363,8 @@ throwError :: MonadError Diagnostic EvalState => Diagnostic -> EvalState a
 
     A diagnostic is a run time error thrown along evaluation.
 
+$\pagebreak$
+
 Problems
 =================
 
@@ -404,8 +411,6 @@ repl env = do
   repl env                                            -- Loop with old env
 ```
 
-#### Main function
-
 We've provided a `main` function for you, which just calls your `repl` with
 `runtime` as the initial environment. The `runtime` environment is explained
 further below.
@@ -433,6 +438,7 @@ scheme>
 Evaluation
 -----------
 
+
 ### Evaluator
 
 Here we will write and test our evaluator.
@@ -443,58 +449,66 @@ Here we will write and test our evaluator.
 in "normal form". When an expression evaluates, the goal is to continually
 evaluate it further, until it reaches a normal form.
 
-Here, the notation means that when $n$ is evaluated in environment $\sigma$, the result is $n$.
+About the notation: when $n$ is evaluated in environment $\sigma$, the result is $n$
+and the environment remains the same $\sigma$.
 
-$$ {[\![n \mid {\sigma}]\!]} {\ \Downarrow \ }n $$
+$$ [\![ n \mid \sigma ]\!] \Downarrow \langle n \mid \sigma \rangle $$
 
-$$ {[\![\#t \mid {\sigma}]\!]} {\ \Downarrow \ }\#t $$
+$$ [\![ \texttt{\#t} \mid \sigma ]\!] \Downarrow \langle \texttt{\#t} \mid \sigma \rangle $$
 
-$$ {[\![\#f \mid {\sigma}]\!]} {\ \Downarrow \ }\#f $$
+$$ [\![ \texttt{\#f} \mid \sigma ]\!] \Downarrow \langle \texttt{\#f} \mid \sigma \rangle $$
+
+$\pagebreak$
 
 #### Problem 3. Symbol
 
 `Symbol` evaluates to the value that it is bound to in the current environment.
 
-Here, the large vertical bar notation shows a side condition, "where."
+Here, our notation may simply show a `Diagnostic` being returned in place of a value.
 
-$$ {[\![s \mid {\sigma}]\!]} {\ \Downarrow \ }v {\ \bigm\vert \ }(s \mapsto v) \in {\sigma}$$
+$$ \frac{(s \mapsto v) \in \sigma}{ [\![ s \mid \sigma ]\!] \Downarrow \langle v \mid \sigma \rangle } $$
 
-$$ {[\![s \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{UndefSymbolError}} {\ \bigm\vert \ }(s \mapsto v) \notin {\sigma}$$
+$$ \frac{(s \mapsto v) \notin \sigma}{ [\![ s \mid \sigma ]\!] \Downarrow \langle \texttt{UndefSymbolError} \mid \sigma \rangle } $$
 
 #### Problem 4. Special form `define` for variables
 
 Now we want to allow the user to define variables. The variable definition form
 is `(define var exp)` (an s-expression). `var` must be a `Symbol`. The evaluator
 will evaluate `exp` and insert to the environment the value as a binding for the
-symbol. Use `modify` to mutate the state.
+symbol. Use `modify` to mutate the state. In our notation, $\sigma$ is the original
+environment, $\sigma'$ is an environment that _may_ have been modified recursively,
+and finally we use substitution notation to show $\sigma'$ gets updated with the
+new binding for $x$.
 
 $$
-    \frac{{[\![e \mid {\sigma}]\!]} {\ \Downarrow \ }v}
-         {{[\![(define\ x\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{Void}}}
+    \frac{{[\![e \mid {\sigma}]\!]} {\ \Downarrow \ } \langle v \mid \sigma' \rangle }
+         {{[\![(\texttt{define}\ x\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\langle \texttt{Void} \mid \sigma' [x \mapsto v ] \rangle}}
 $$
 
 $~$
 
 ``` {.scheme}
-scheme> (define x (+ 10 20))
-scheme> x
+scheme> (define a (+ 10 20))
+scheme> a
 30
-scheme> y
-Error: Symbol y is undefined
+scheme> b
+Error: Symbol b is undefined
 ```
 
-#### Problem 5. Special form `define` for functions
+(In _real_ Scheme, you're not allowed to have nested `define`, but we don't check for that.
+For fun, you could try to use our version of the semantics to do something weird.)
+
+#### Problem 5a. Special form `define` for named functions
 
 We've already given you the ability to define functions. This has the form
 `(define (f params) body)`. The parameters, body, and environment when the
 function is declared get wrapped into a `Func` value. It uses `get` to retrieve
 the environment from the state monad, and `modify` to mutate the state. A `Func`
-value is also a normal form. (Note: These functions do not allow for recursion.
-But that makes your job easier.)
+value is also a normal form.
 
 The semantics for this can be given as follows. The notation $valid(p_1 \cdots p_n)$ means that
 parameters $p_1 \cdots p_n$ (such as might be labeled `x y z` in `f x y z`, for example) must
-be a proper list of `Symbol`s, implemented with type List [Symbol].
+be a proper list of `Symbol`s, implemented with type `List`&nbsp;`[Symbol]`.
 
 <!---
 $$ ps = p_1 \cdots p_n \qquad $$
@@ -503,27 +517,18 @@ $$ ps = p_1 \cdots p_n \qquad $$
 -->
 
 $$
-    {[\![(\texttt{define}\ (f\ p_1 \cdots p_n)\ e) \mid {\sigma}]\!]}
-    {\ \Downarrow \ }{\texttt{Func}}\ p_1 \cdots p_n\ e\ {\sigma}'
-    {\ \bigm\vert \ }valid(p_1 \cdots p_n)
+    \frac
+    {valid(p_1 \cdots p_n)}
+    {{[\![(\texttt{define}\ (f\ p_1 \cdots p_n)\ e) \mid {\sigma}]\!]}
+      \Downarrow \langle \texttt{Void} \mid \sigma [ f \mapsto {\texttt{Func}}\ p_1 \cdots p_n\ e\ \sigma ] \rangle}
 $$
 
 $$
-    {[\![(\texttt{define}\ (f \ p_1 \cdots p_n)\ e) \mid {\sigma}]\!]}
-    {\ \Downarrow \ }{\texttt{InvalidSpecialForm}}
-    {\ \bigm\vert \ }\lnot valid(p_1 \cdots p_n)
+    \frac
+    {\lnot\, valid(p_1 \cdots p_n)}
+    {{[\![(\texttt{define}\ (f\ p_1 \cdots p_n)\ e) \mid {\sigma}]\!]}
+      \Downarrow \langle \texttt{NotASymbol} \mid \sigma \rangle}
 $$
-
-$~$
-
-What you want to implement is a lambda-function form, `(lambda (params) body)`,
-which also evaluates to a `Func`. The lambda creates an anonymous function to be
-used as a value, although it does not necessarily define it as part of the
-environment.
-
-$$ {[\![(\texttt{lambda}\ (p_1 \cdots p_n)\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{Func}}\ p_1 \cdots p_n\ e\ {\sigma}{\ \bigm\vert \ }valid(p_1 \cdots p_n) $$
-
-$$ {[\![(\texttt{lambda}\ (p_1 \cdots p_n)\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{InvalidSpecialForm}} {\ \bigm\vert \ }\lnot valid(p_1 \cdots p_n) $$
 
 $~$
 
@@ -535,22 +540,72 @@ scheme> inc
 scheme> (inc 10)
 11
 scheme> (define x 2)
-scheme> (inc 10)
-11
 scheme> (define (add x y) (+ x y))
 scheme> (add 3 4)
 7
+scheme> (define (fact n) (cond ((< n 1) 1) (else (* n (fact (- n 1))))))
+scheme> (fact 5)
+120
+```
+
+Note that named functions in Scheme can be used recursively. This isn't because
+of the binding semantics given here, but because of the mechanism by which they are applied.
+There is more detail later in this document.
+
+#### Problem 5b. Special form `lambda` for anonymous function expressions
+
+You also need to implement a lambda-function form, `(lambda (params) body)`,
+which also evaluates to a `Func`. The lambda creates an anonymous function to be
+used as a value, and it does _not_ automatically bind it to a name in the environment.
+
+$$ \frac
+   {valid(p_1 \cdots p_n)}
+   {[\![(\texttt{lambda}\ (p_1 \cdots p_n)\ e) \mid \sigma]\!] {\ \Downarrow \ } \langle {\texttt{Func}}\ p_1 \cdots p_n\ e\ {\sigma} \mid \sigma \rangle}
+$$
+
+<!-- old
+$$ {[\![(\texttt{lambda}\ (p_1 \cdots p_n)\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{Func}}\ p_1 \cdots p_n\ e\ {\sigma}{\ \bigm\vert \ }valid(p_1 \cdots p_n) $$
+-->
+
+$$ \frac
+   {\lnot\, valid(p_1 \cdots p_n)}
+   {[\![(\texttt{lambda}\ (p_1 \cdots p_n)\ e) \mid \sigma]\!] {\ \Downarrow \ } \langle \texttt{NotASymbol} \mid \sigma \rangle}
+$$
+
+<!-- old
+$$ {[\![(\texttt{lambda}\ (p_1 \cdots p_n)\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{NotASymbol}} {\ \bigm\vert \ }\lnot\, valid(p_1 \cdots p_n) $$
+-->
+
+$~$
+
+In usage, a lambda expression could be applied immediately where it is written:
+
+``` {.scheme}
 scheme> (lambda (x) (+ x 10))
 #<function:(λ (x) ...)>
 scheme> ((lambda (x) (+ x 10)) 20)
 30
-scheme> (define (mkInc x) (lambda (y) (+ x y)))
-scheme> (define i2 (mkInc 2))
+```
+
+Or, a lambda expression could be explicitly bound to a name in the environment
+using `define`. You can even parameterize it by supplying additional parameters
+with the `define`:
+
+``` {.scheme}
+scheme> (define (incBy x) (lambda (y) (+ x y)))
+scheme> (define i2 (incBy 2))
 scheme> (i2 10)
 12
-scheme> (define (fact n) (cond ((< n 1) 1) (else (* n (fact (- n 1))))))
-scheme> (fact 5)
-120
+```
+
+This partially allows for currying. However, direct application of such
+functions still must obey the proper nesting of parentheses:
+
+``` {.scheme}
+scheme> (incBy 2 10)
+Error: Cannot apply #<function:(λ (x) ...)> on argument list (2 10)
+scheme> ((incBy 2) 10)
+12
 ```
 
 #### Problem 6. Special form `cond`
@@ -577,26 +632,31 @@ $$ {[\![(cond\ ((e) \cdots)) \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{ Diagn
 -->
 
 $$
-    {{[\![(\operatorname{cond}) \mid {\sigma}]\!]} {\ \Downarrow \ }\texttt{InvalidSpecialForm}}
+    {[\![(\texttt{cond}) \mid {\sigma}]\!]} {\ \Downarrow \ } \langle \texttt{InvalidSpecialForm} \mid \sigma \rangle
 $$
 
 $$
-    \frac{{[\![e \mid {\sigma}]\!]} {\ \Downarrow \ v}}
-         {{[\![(\operatorname{cond}\ (\operatorname{else}\ e)) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+    \frac{{[\![c_1 \mid {\sigma}]\!]} {\ \Downarrow \ } \langle \texttt{Truthy} \mid \sigma' \rangle   \qquad {[\![e_1 \mid {\sigma'}]\!]} {\ \Downarrow \ } \langle v_1 \mid \sigma'' \rangle }
+         {{[\![(\texttt{cond}\ (c_1\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ } \langle v_1 \mid \sigma'' \rangle } \textrm{\quad where Truthy is any non-False value and $n\geq 1$}
 $$
 
 $$
-    \frac{{[\![c_1 \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{Truthy}} \qquad {[\![e_1 \mid {\sigma}]\!]} {\ \Downarrow \ }v_1}
-         {{[\![(\operatorname{cond}\ (c_1\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }v_1} \textrm{\quad where Truthy is any non-False value and $n\geq 1$}
+    \frac{{[\![c_1 \mid {\sigma}]\!]} {\ \Downarrow \ } \langle \texttt{False} \mid \sigma' \rangle \qquad {[\![(\texttt{cond}\ (c_2\ e_2) \cdots (c_n\ e_n)) \mid {\sigma'}]\!]} {\ \Downarrow \ } \langle v \mid \sigma'' \rangle}
+         {{[\![(\texttt{cond}\ (c_1\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }\langle v \mid \sigma'' \rangle} \textrm{\quad where $n \geq 2$}
 $$
 
 $$
-    \frac{{[\![c_1 \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{False}} \qquad {[\![(\operatorname{cond}\ (c_2\ e_2) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
-         {{[\![(\operatorname{cond}\ (c_1\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }v} \textrm{\quad where $n \geq 1$}
+    \frac{{[\![e \mid {\sigma}]\!]} \Downarrow  \langle v \mid \sigma' \rangle }
+         {{[\![(\texttt{cond}\ (\texttt{else}\ e)) \mid {\sigma}]\!]} \Downarrow \langle v \mid \sigma' \rangle}
 $$
 
 $$
-    {{[\![(\operatorname{cond}\ (\operatorname{else}\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ }\texttt{InvalidSpecialForm}}
+    \frac{{[\![c_1 \mid {\sigma}]\!]} {\ \Downarrow \ } \langle {\texttt{False}} \mid \sigma' \rangle  }
+         {{[\![(\texttt{cond}\ (c_1\ e_1)) \mid {\sigma}]\!]} {\ \Downarrow \ } \langle \texttt{Void} \mid \sigma' \rangle  }
+$$
+
+$$
+    {{[\![(\texttt{cond}\ (\texttt{else}\ e_1) \cdots (c_n\ e_n)) \mid {\sigma}]\!]} {\ \Downarrow \ } \langle \texttt{InvalidSpecialForm} \mid \sigma \rangle }
 $$
 
 $~$
@@ -625,8 +685,8 @@ the second element to a `Val`, and returns a Haskell tuple of type `(String, Val
 
 $$
     \frac{{[\![e_1 \mid {\sigma}]\!]} {\ \Downarrow \ }v_1 \cdots {[\![e_n \mid {\sigma}]\!]} {\ \Downarrow \ }v_n
-            \qquad {[\![e \mid {\sigma}{\ \cup\ }\bigcup_{i=1}^n \{x_i \mapsto v_i\}]\!]} {\ \Downarrow \ }v}
-         {{[\![(let\ ((x_1\ e_1) \cdots (x_n\ e_n))\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+            \qquad {[\![e_{\textrm{body}} \mid {\sigma}{\ \cup\ }\bigcup_{i=1}^n \{x_i \mapsto v_i\}]\!]} {\ \Downarrow \ }v}
+         {{[\![(\texttt{let}\ ((x_1\ e_1) \cdots (x_n\ e_n))\ e_{\textrm{body}}) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
 $$
 
 $~$
@@ -649,16 +709,32 @@ scheme> y
 
 Define the `(let* ((x1 e1) ... (xn en)) body)` form. 
 
-Special form `let*` is like `let`, but evaluates e1, ..., en one by one,
+Special form `let*` is like `let`, but evaluates $e_1,\,\ldots,\,e_n$ one by one,
 creating a location for each id as soon as the value is available. The ids are
-bound in the remaining binding expressions as well as the bodies, and the ids
-need not be distinct; later bindings shadow earlier bindings.
+bound in the remaining binding expressions as well as the body, and the ids
+need not be distinct; later bindings shadow earlier bindings. (The notation
+$\sigma [x \mapsto v]$ shows an update to environment $\sigma$.)
 
 $$
-    \frac{{[\![e_1 \mid {\sigma}]\!]} {\ \Downarrow \ }v_1 \cdots {[\![e_n \mid {\sigma}]\!]} {\ \Downarrow \ }v_n
-            \qquad {[\![e \mid {\sigma}{\ \cup\ }\bigcup_{i=1}^n \{x_i \mapsto v_i\}]\!]} {\ \Downarrow \ }v}
-         {{[\![(let\ ((x_1\ e_1) \cdots (x_n\ e_n))\ e) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+    \frac{{[\![e_{\textrm{body}} \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+         {{[\![(\texttt{let*}\ ()\ e_{\textrm{body}}) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
 $$
+
+$$
+    \frac{{[\![e_1 \mid {\sigma}]\!]} {\ \Downarrow \ }v_1
+            \qquad {[\![(\texttt{let*}\ ((x_2\ e_2) \cdots (x_n\ e_n))\ e_{\textrm{body}}) \mid {\sigma}[x_1 \mapsto v_1]{\ }]\!]} {\ \Downarrow \ }v
+            }
+         {{[\![(\texttt{let*}\ ((x_1\ e_1) \cdots (x_n\ e_n))\ e_{\textrm{body}}) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+         \textrm{\quad where $n\geq 1$}
+$$
+
+<!--
+$$
+    \frac{{[\![e_1 \mid {\sigma}]\!]} {\ \Downarrow \ }v_1 \cdots {[\![e_n \mid {\sigma}]\!]} {\ \Downarrow \ }v_n
+            \qquad {[\![e_{\textrm{body}} \mid {\sigma}{\ \cup\ }\bigcup_{i=1}^n \{x_i \mapsto v_i\}]\!]} {\ \Downarrow \ }v}
+         {{[\![(\texttt{let*}\ ((x_1\ e_1) \cdots (x_n\ e_n))\ e_{\textrm{body}}) \mid {\sigma}]\!]} {\ \Downarrow \ }v}
+$$
+-->
 
 $~$
 
@@ -751,9 +827,10 @@ scheme> (eval (eval ``(+ ,,a 1)))
 #### Problem 10. Special form `define-macro`
 
 Define the `(define-macro (f params) exp)` form which defines a `Macro`. A `Macro`
-almost exactly like a function, except we do evaluation twice. First, we
+is similar to a function: the key difference is not here in its definition binding,
+but later in its application, where we actually do evaluation twice. First, we
 evaluate the body of the macro, processing the arguments as frozen syntactic
-pieces _without evaluating them_, and get the resulting syntax blob. Then,
+pieces _without evaluating them individually_, getting a new syntax blob. Then,
 we feed the result back into the evaluator to get the final result. In essence,
 macros use lazy evaluation.
 
@@ -761,14 +838,15 @@ $$ ps = p_1 \cdots p_n $$
 
 $$
     {[\![(\texttt{define-macro}\ (f \ ps)\ e) \mid {\sigma}]\!]}
-    {\ \Downarrow \ }{\texttt{Macro}}\ ps\ e\ {\sigma}'\
-    {\ \bigm\vert \ }valid(ps)
+    {\ \Downarrow \ }
+    \langle \texttt{Void} \mid \sigma [ f \mapsto \texttt{Macro}\ ps\ e ] \rangle
+    \quad\textrm{if }valid(ps)
 $$
 
 $$
     {[\![(\texttt{define-macro}\ (f \ ps)\ e) \mid {\sigma}]\!]}
     {\ \Downarrow \ }{\texttt{InvalidSpecialForm}}
-    {\ \bigm\vert \ }\lnot valid(ps)
+    \quad\textrm{if }\lnot\, valid(ps)
 $$
 
 In your evaluator skeleton, we implemented a special form `if` for you, but it's
@@ -809,8 +887,8 @@ manipulates its arguments _at the syntax level_ before actually evaluating them.
     1. Save the environment (Hint: use `get` to get the environment from the state)
 
     2. Bind arguments (without evaluating them) to the parameters of the
-      macro and insert them to the environment (Hint: use `modify` to mutate the
-      state)
+       macro and insert them to the environment (Hint: use `modify` to mutate the
+       state)
 
     3. Evaluate the macro body (i.e. expand the macro body)
 
@@ -850,6 +928,13 @@ manipulates its arguments _at the syntax level_ before actually evaluating them.
      
     * Otherwise, throw a diagnostic `CannotApply`.
 
+A note about recursion in Scheme: As you can see from the steps above,
+when functions are applied, they get evaluated in an environment that _combines_
+the bindings where the application occurs with the bindings stored in the closure.
+That means a function can easily refer to itself. In some other languages, this is not
+how recursion is implemented. What would happen if a function body could only be
+evaluated in the closure environment?
+
 <!--
 $$
     \frac{{[\![f \mid {\sigma}]\!]} {\ \Downarrow \ }{\texttt{PrimFunc}}\ p
@@ -885,6 +970,7 @@ map from `String` (identifiers) to `Val` (values). This will be used to hold the
 values of defined constants, operators, and functions. The main call to `repl`
 should provide this `runtime` as the starting environment. (It is also
 possible to call `repl` with a different starting environment for experimental purposes.)
+You can test your `runtime` using the REPL, so implement the REPL first!
 
 You need to initialize `runtime` with predefined primitive operators as well.
 This will make these operators available to users of your language. Some of them
@@ -929,24 +1015,22 @@ isList vv = throwError $ UnexpectedArgs vv
 ```
 
 By the way, many of the provided stubs for the runtime problems use `const` to
-create a curried function that will discard a provided parameter and throw an error
-instead. For example:
+create a curried function that will simply discard any provided parameter and
+perform a stub action instead. For example,
 
 ``` {.haskell}
-Prelude> foo x = "hi"
-Prelude> foo 1
-"hi"
-Prelude> foo = const $ "hi"
-Prelude> foo 1
-"hi"
+Prelude> foo x y = "please implement this function"
+Prelude> foo 1 2
+"please implement this function"
+Prelude> foo = const . const $ "please implement this function"
+Prelude> foo 1 2
+"please implement this function"
 ```
-
-You can test your `runtime` using the REPL. Implement the REPL first!
 
 ### Operators
 
 #### Problem 12. Variadic arithmetic operators (`+`, `-`, `*`, `/`): implement `liftIntVargOp`
-**Note: In this release of the assignment, this function has already been provided for you.**
+_Note: In this release of the assignment, this function has already been provided for you._
 
 You need to implement `liftIntVargOp` that takes an operator and a base-case. If
 the supplied list of values is empty, then the base-case (lifted into the Scheme
@@ -1314,6 +1398,7 @@ Testing
 Aside from the provided testcases, you may want to manually enter the examples
 shown above, to observe that everything is working correctly (and for your benefit).
 
+$\pagebreak$
 
 Finally, more cool stuff
 -------------------------------
