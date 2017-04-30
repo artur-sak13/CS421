@@ -11,7 +11,8 @@ pandoc -t latex -o README.pdf README.md --latex-engine=xelatex --variable monofo
 Logistics
 ---------
 
--   revision: 1.3 - Corrected various semantics; showed more environment state changes
+-   revision: 1.4 - Notes on `flattenList`, minimal REPL examples
+-   revision: 1.3 - Corrected various semantics, showed more environment state changes
 -   revision: 1.2 - Bugfix in `cond` rules; typesetting edited
 -   revision: 1.1 - Revised documentation for clarity
 -   release date: April 26, 2017
@@ -83,12 +84,6 @@ It will tell you which test-suites you pass, fail, and have exceptions on. To
 see an individual test-suite (so you can run the tests yourself by hand to see
 where the failure happens), look in the file `test/Spec.hs`.
 
-<!---
-It will also tell you whether you have passed enough of the tests to receive
-credit for the ML. If you do not pass 60% of the tests on the MP, you will not
-receive credit for the associated ML.
--->
-
 You can run individual test-sets by running `stack ghci` and loading the `Spec`
 module with `:l Spec`. Then you can run the tests (specified in `test/Tests.hs`)
 just by using the name of the test:
@@ -100,14 +95,18 @@ Given Code
 
 In directory `app/`:
 
-- `Main.hs`: a fully implemented REPL frontend
+- `Main.hs`: partially implemented REPL frontend
 
 In directory `app/Scheme/`:
 
-- `Core.hs`: partially implemented core language data structures
-- `Parse.hs`: a fully implemented parser
+- `Core.hs`: fully implemented core language data structures
+- `Parse.hs`: fully implemented parser
 - `Eval.hs`: partially implemented evaluator
 - `Runtime.hs`: partially implemented runtime routines
+
+In directory `soln_bin/`:
+
+- `mp6ref`: Executable Linux binary that works on EWS, as an illustrative reference for a model solution.
 
 ### Environment
 
@@ -147,7 +146,7 @@ as an expression and evaluates it!
 
 Now we'll describe what the different values mean, and provide some examples.
 
-$\pagebreak$
+ 
 
 ### Kinds of values
 
@@ -194,15 +193,22 @@ $\pagebreak$
 
     However, because `DottedList` might be used to provide a null list as the trailing
     value, lists and dotted lists that are constructed differently can be equivalent by value.
-    We offer you a useful helper function - `flattenList`, which flattens a `DottedList` to the
-    simplest form, which might convert to a `List` or remain a `DottedList`. You will find it
-    extremely useful when implementing primitive functions in the runtime.
+    We offer you a useful helper function, `flattenList`, which flattens a `DottedList` to the
+    simplest form; the flattening may simplify a dotted list to a proper list if possible,
+    to a non-list singleton type, or to a simpler improper list that's still dotted.
+    You will find it
+    extremely useful when implementing primitive functions in the runtime, and you may want
+    to use `flattenList` whenever you are trying to do Haskell pattern matching on a Scheme list.
+    (That includes cases where you're passing a Scheme list to a Haskell function that has
+    multiple definitions! Remember, in Haskell, that does pattern matching.)
 
     For example, here are the results of flattening some proper and improper lists.
-    The third example is improper, so it remains a dotted list after flattening.
+    When the left of the dot is blank, the right hand side is flattened recursively.
+    The fourth example is an improper list, so it remains a dotted list after flattening.
 
     | Nested               | Flattened   |
     |----------------------|-------------|
+    | `( . ( . 3 ))`       | `3`         |
     | `( . ())`            | `()`        |
     | `(1 . ())`           | `(1)`       |
     | `(1 . (2 . 3))`      | `(1 2 . 3)` |
@@ -236,8 +242,6 @@ $\pagebreak$
     The evaluator returns a value for every expression. Void is a special return
     type of the `(define ...)` and `(define-macro ...)` special forms. It does not
     represent any data.
-
-$\pagebreak$
 
 ### Example ASTs for Values
 
@@ -312,23 +316,23 @@ do -- Save the current environment
 
   In order to work with the `EvalState` monad, you will use the following
   library functions. To explain briefly, because of how we defined our `EvalState`
-  with `StateT`, `EvalState` is also an instance of the library typeclasses `MonadState`
-  and `MonadError`, which provides us with these functions:
+  with `StateT`, `EvalState` is also an instance of some library typeclasses that
+  provide us with these functions:
 
 ``` {.haskell}
 -- Return the state from the internals of the monad.
-get :: MonadState Env EvalState => EvalState Env
+get :: EvalState Env
   
 -- Specify a new state to replace the state inside the monad.
-put :: MonadState Env EvalState => Env -> EvalState ()
+put :: Env -> EvalState ()
   
 -- Monadic state transformer. Taking a function as its argument, it converts
 -- the old state to a new state inside the state monad. The old state is lost.
-modify :: MonadState Env EvalState => (Env -> Env) -> EvalState ()
+modify :: (Env -> Env) -> EvalState ()
   
 -- Used within a monadic computation to begin exception processing. We'll use
 -- it to throw `Diagnostic` errors and still return an `EvalState`.
-throwError :: MonadError Diagnostic EvalState => Diagnostic -> EvalState a
+throwError :: Diagnostic -> EvalState a
 ```
   
 ### Terminology
@@ -363,7 +367,7 @@ throwError :: MonadError Diagnostic EvalState => Diagnostic -> EvalState a
 
     A diagnostic is a run time error thrown along evaluation.
 
-$\pagebreak$
+$\pagebreak$ 
 
 Problems
 =================
@@ -430,14 +434,32 @@ $ stack ghci
 [4 of 4] Compiling Scheme.Runtime (...)
 [5 of 5] Compiling Main (...)
 *Main Scheme.Core Scheme.Eval Scheme.Parse Scheme.Runtime> main
+scheme>
+```
+
+We do not automatically test your REPL in the test cases! As a sanity check,
+the following should work even if you haven't done the rest of the MP yet.
+These inputs correspond to catching an error, evaluating to a void,
+and evaluating to some other value:
+
+``` {.scheme}
+scheme> (define (f x))
+Error: Invalid pattern in special form `define`: (define (f x))
+scheme> (define (f x) (1))
+scheme> `(3 . 3)
+(3 . 3)
+```
+
+After you implement the evaluator and runtime, all sorts of inputs
+should work:
+
+``` {.scheme}
 scheme> (cons 'monad '(is just a monoid in the category of endofunctors))
 (monad is just a monoid in the category of endofunctors)
-scheme>
 ```
 
 Evaluation
 -----------
-
 
 ### Evaluator
 
@@ -457,8 +479,6 @@ $$ [\![ n \mid \sigma ]\!] \Downarrow \langle n \mid \sigma \rangle $$
 $$ [\![ \texttt{\#t} \mid \sigma ]\!] \Downarrow \langle \texttt{\#t} \mid \sigma \rangle $$
 
 $$ [\![ \texttt{\#f} \mid \sigma ]\!] \Downarrow \langle \texttt{\#f} \mid \sigma \rangle $$
-
-$\pagebreak$
 
 #### Problem 3. Symbol
 
@@ -1362,15 +1382,18 @@ Further steps
 Now that our evaluator is fully functional, we can implement the following
 functions that make use of the evaluator.
 
-``` {.scheme}
+``` {.haskell}
 -- Primitive function `apply`
 -- It applies a function to a list of parameters
 -- Examples:
 --   (apply + '(1 2 3))  => 6
 --   (apply car '((1 2 3)))  => 1
+--   (apply (lambda (x) (* 10 x)) '(300)) => 3000
 applyPrim :: [Val] -> EvalState Val
 applyPrim = undefined
+```
 
+``` {.haskell}
 -- Primitive function `eval`
 -- It evaluates the single argument as an expression
 -- All you have to do is to check the number of arguments and
@@ -1398,7 +1421,7 @@ Testing
 Aside from the provided testcases, you may want to manually enter the examples
 shown above, to observe that everything is working correctly (and for your benefit).
 
-$\pagebreak$
+ 
 
 Finally, more cool stuff
 -------------------------------
