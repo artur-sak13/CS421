@@ -11,6 +11,7 @@ pandoc -t latex -o README.pdf README.md --latex-engine=xelatex --variable monofo
 Logistics
 ---------
 
+-   revision: 1.5 - Corrected sample output on several problems
 -   revision: 1.4 - Notes on `flattenList`, minimal REPL examples
 -   revision: 1.3 - Corrected various semantics, showed more environment state changes
 -   revision: 1.2 - Bugfix in `cond` rules; typesetting edited
@@ -104,7 +105,7 @@ In directory `app/Scheme/`:
 - `Eval.hs`: partially implemented evaluator
 - `Runtime.hs`: partially implemented runtime routines
 
-In directory `soln_bin/`:
+Available on Piazza:
 
 - `mp6ref`: Executable Linux binary that works on EWS, as an illustrative reference for a model solution.
 
@@ -253,7 +254,7 @@ The quote expressions are explained later in the MP.
 | Scheme expression  | Haskell AST representation                                          |
 |--------------------|---------------------------------------------------------------------|
 | `1`                | `Number 1`                                                          |
-| `a`                | `Symbol a`                                                          |
+| `a`                | `Symbol "a"`                                                        |
 | `#t`               | `Boolean True`                                                      |
 | `#f`               | `Boolean False`                                                     |
 | `(define (f x) x)` | `List [Symbol "define", List [Symbol "f",`                          |
@@ -1169,7 +1170,7 @@ scheme> (cdr '(3 5 . 6))
 scheme> (cdr '(3 5 . (6 . 7)))
 (5 6 . 7)
 scheme> (list (> 3 4) #t 15 #f (< 5 2 3 5) (cons 3 (cons 4 3)))
-(#f #t 15 #f #f (3 . (4 . 3)))
+(#f #t 15 #f #f (3 4 . 3))
 scheme> (car (cons 'a 'b))
 a
 scheme> (cdr (cons 'a 'b))
@@ -1305,10 +1306,11 @@ Check those out for hints.
   * `symbol?` Checks whether the input is a `Symbol`.
 
   * `list?` Checks whether a "flattened" version of the list is really a proper list
-      (not a dotted list or something else)
+      (not a dotted list or something else).
 
   * `pair?` Accepts either proper Scheme lists or dotted lists, nothing else. (Remember,
-      in Scheme, both proper lists and improper "dotted" lists are technically types of pairs.)
+      in Scheme, both proper lists and dotted lists are technically types of pairs.)
+      _However_, an empty list `()` is considered a "null pointer" just like an empty linked list, thus not a pair.
 
   * `null?` Checks for an empty, proper list.
 
@@ -1350,7 +1352,7 @@ scheme> (pair? '(3 5))
 scheme> (number? '(3))
 #f
 scheme> (pair? '())
-#t
+#f
 scheme> (number? 3)
 #t
 scheme> (boolean? 3)
@@ -1414,14 +1416,11 @@ Now, add these functions to the runtime and test them.
     It has exactly the right simplicity to allow very elegant and compact
     specifications.
 
-
 Testing
 ----------------------
 
 Aside from the provided testcases, you may want to manually enter the examples
 shown above, to observe that everything is working correctly (and for your benefit).
-
- 
 
 Finally, more cool stuff
 -------------------------------
