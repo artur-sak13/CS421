@@ -11,6 +11,7 @@ pandoc -t latex -o README.pdf README.md --latex-engine=xelatex --variable monofo
 Logistics
 ---------
 
+-   revision: 1.6 - Clarification about `=` and `eq?` edge case
 -   revision: 1.5 - Corrected sample output on several problems
 -   revision: 1.4 - Notes on `flattenList`, minimal REPL examples
 -   revision: 1.3 - Corrected various semantics, showed more environment state changes
@@ -1229,7 +1230,8 @@ You will implement two variants of Scheme's equality:
 
     Equality for atom values, including numbers, booleans, and symbols, returning `#f` on type mismatch or unsupported types (not throwing diagnostics!)
 
-Both `=` and `eq` are variadic with default value `#t`.
+Both `=` and `eq?` are variadic with default value `#t`. When the number of arguments is 0 or 1, these functions return `#t`
+_regardless_ of the arguments' types or values.
 
 ``` {.scheme}
 scheme> (=)
@@ -1243,6 +1245,8 @@ scheme> (= 1 1)
 scheme> (= 3 3 2)
 #f
 scheme> (= 'a)
+#t
+scheme> (= 'a 'a)
 Error: Value a has unexpected type Symbol
 scheme> (eq? 3 3 2)
 #f
