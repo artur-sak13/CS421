@@ -1,6 +1,6 @@
 Grade report for Artur Sak
 Programming Languages (cs421) 2017-01
-Report generated 2017-05-04 11:25:47
+Report generated 2017-05-04 12:53:24
 
 
 Factors are {16: 0.0, 11: 4.0, 12: 2.0, 13: 8.0, 14: 8.0, 15: 7.0}
