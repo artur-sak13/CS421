@@ -1,6 +1,6 @@
 Grade report for Artur Sak
 Programming Languages (cs421) 2017-01
-Report generated 2017-05-04 10:38:50
+Report generated 2017-05-04 10:56:33
 
 
 Factors are {16: 0.0, 11: 4.0, 12: 2.0, 13: 8.0, 14: 8.0, 15: 7.0}
@@ -39,7 +39,7 @@ First and Follow Sets - Exam 2  Graded      5 /  10  50.0    2.86   1.43
                Lambda Activity  Graded      1 /   1 100.0    0.62   0.62
                   CPS Activity  Graded      3 /   3 100.0    0.62   0.62
                 Monad Activity  Graded      2 /   2 100.0    0.62   0.62
-                   LL Activity  Graded      0 /   2   0.0    0.62   0.00
+                   LL Activity  Graded      0 /   3   0.0    0.62   0.00
 
 
 
