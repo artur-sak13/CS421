@@ -1,45 +1,52 @@
 Grade report for Artur Sak
 Programming Languages (cs421) 2017-01
-Report generated 2017-04-18 10:33:22
+Report generated 2017-05-03 19:31:23
 
 
-Factors are {16: 0.0, 11: 4.0, 12: 2.0, 13: 8.0, 14: 8.0, 15: 0.0}
-                   Assignment  Status Points / Max  Norm Weight% Points
------------------------------------------------------------------------
-           Recursion - Exam 1  Graded     10 /  10 100.0    2.50   2.50
-      Tail Recursion - Exam 1  Graded     10 /  10 100.0    2.50   2.50
-Algebraic Data Types - Exam 1  Graded     10 /  10 100.0    2.50   2.50
-        Writing HOFs - Exam 1  Graded      2 /  10  20.0    2.50   0.50
-          Using HOFs - Exam 1  Graded     10 /  10 100.0    2.50   2.50
-     Lambda Calculus - Exam 1  Graded     10 /  10 100.0    2.50   2.50
-       Continuations - Exam 1  Graded     10 /  10 100.0    2.50   2.50
-        Type Classes - Exam 1  Graded      2 /  10  20.0    2.50   0.50
-               Haskell - MP 1  Graded    100 / 100 100.0    3.75   3.75
-           Interpreter - MP 2  Graded    100 / 100 100.0    3.75   3.75
-                   CPS - MP 3  Graded    100 / 100 100.0    3.75   3.75
-                 Forth - MP 4    Late     80 / 100  80.0    3.75   3.00
-               Parsing - MP 5 Pending      0 / 100   0.0    0.00   0.00
-                Scheme - MP 6 Pending      0 / 100   0.0    0.00   0.00
-       Type Inferencer - MP 7 Pending      0 / 100   0.0    0.00   0.00
-           Interpreter - ML 2  Graded     50 / 100  50.0    7.50   3.75
-                   CPS - ML 3 Dropped     20 / 100  20.0    0.00   0.00
-                 Forth - ML 4  Graded     60 / 100  60.0    7.50   4.50
-                Scheme - ML 5 Pending      0 / 100   0.0    0.00   0.00
-              Gitlab Activity  Graded      1 /   1 100.0    0.62   0.62
-           Recursion Activity  Graded      2 /   2 100.0    0.62   0.62
-           HOF Activity (fix)  Graded      2 /   2 100.0    0.62   0.62
-              MyList Activity  Graded      1 /   1 100.0    0.62   0.62
-              Lambda Activity  Graded      1 /   1 100.0    0.62   0.62
-                 CPS Activity  Graded      3 /   3 100.0    0.62   0.62
-               Monad Activity  Graded      2 /   2 100.0    0.62   0.62
-                  LL Activity  Graded      0 /   2   0.0    0.62   0.00
+Factors are {16: 0.0, 11: 4.0, 12: 2.0, 13: 8.0, 14: 8.0, 15: 7.0}
+                    Assignment  Status Points / Max  Norm Weight% Points
+------------------------------------------------------------------------
+            Recursion - Exam 1  Graded     10 /  10 100.0    2.50   2.50
+       Tail Recursion - Exam 1  Graded     10 /  10 100.0    2.50   2.50
+ Algebraic Data Types - Exam 1  Graded     10 /  10 100.0    2.50   2.50
+         Writing HOFs - Exam 1  Graded      2 /  10  20.0    2.50   0.50
+           Using HOFs - Exam 1  Graded     10 /  10 100.0    2.50   2.50
+      Lambda Calculus - Exam 1  Graded     10 /  10 100.0    2.50   2.50
+        Continuations - Exam 1  Graded     10 /  10 100.0    2.50   2.50
+         Type Classes - Exam 1  Graded      2 /  10  20.0    2.50   0.50
+    Regular Languages - Exam 2  Graded      0 /  20   0.0    2.86   0.00
+First and Follow Sets - Exam 2  Graded      5 /  10  50.0    2.86   1.43
+               Monads - Exam 2  Graded      1 /  10  10.0    2.86   0.29
+          LL Grammars - Exam 2  Graded      0 /  20   0.0    2.86   0.00
+          LR Grammars - Exam 2  Graded      0 /  10   0.0    2.86   0.00
+            Monotypes - Exam 2  Graded      0 /  20   0.0    2.86   0.00
+          Unification - Exam 2  Graded     20 /  10 200.0    2.86   5.71
+                Haskell - MP 1  Graded    100 / 100 100.0    3.75   3.75
+            Interpreter - MP 2  Graded    100 / 100 100.0    3.75   3.75
+                    CPS - MP 3  Graded    100 / 100 100.0    3.75   3.75
+                  Forth - MP 4    Late     80 / 100  80.0    3.75   3.00
+                Parsing - MP 5 Pending      0 / 100   0.0    0.00   0.00
+                 Scheme - MP 6 Pending      0 / 100   0.0    0.00   0.00
+        Type Inferencer - MP 7 Pending      0 / 100   0.0    0.00   0.00
+            Interpreter - ML 2  Graded     50 / 100  50.0    7.50   3.75
+                    CPS - ML 3 Dropped     20 / 100  20.0    0.00   0.00
+                  Forth - ML 4  Graded     60 / 100  60.0    7.50   4.50
+                 Scheme - ML 5 Pending      0 / 100   0.0    0.00   0.00
+               Gitlab Activity  Graded      1 /   1 100.0    0.62   0.62
+            Recursion Activity  Graded      2 /   2 100.0    0.62   0.62
+            HOF Activity (fix)  Graded      2 /   2 100.0    0.62   0.62
+               MyList Activity  Graded      1 /   1 100.0    0.62   0.62
+               Lambda Activity  Graded      1 /   1 100.0    0.62   0.62
+                  CPS Activity  Graded      3 /   3 100.0    0.62   0.62
+                Monad Activity  Graded      2 /   2 100.0    0.62   0.62
+                   LL Activity  Graded      0 /   2   0.0    0.62   0.00
 
 
 
-Earned points so far:  42.88
-Graded points so far:  55.00
-       Current score: 77.95%
-        Max possible: 87.88%
+Earned points so far:  50.30
+Graded points so far:  75.00
+       Current score: 67.07%
+        Max possible: 75.30%
 
  (Max possible does not take grade replacement from final into account.)
 If you believe there is an error that only affects you, please open an issue on your gitlab account.
