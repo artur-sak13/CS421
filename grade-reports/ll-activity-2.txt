@@ -4,10 +4,10 @@ Using cabal packages:
 
 Selecting the best among 10 snapshots...
 
-* Matches lts-8.6
+* Matches lts-8.13
 
-Selected resolver: lts-8.6
-Initialising configuration using resolver: lts-8.6
+Selected resolver: lts-8.13
+Initialising configuration using resolver: lts-8.13
 Total number of user packages considered: 1
 Writing configuration to file: stack.yaml
 All done.
@@ -24,9 +24,9 @@ Preprocessing test suite 'code-test' for code-0.1.0.0...
 Linking .stack-work/dist/x86_64-linux-nopie/Cabal-1.24.2.0/build/code-test/code-test ...
 code-0.1.0.0: copy/register
 Installing library in
-/home/mattox/tmp/tmp.GKDa24tCHK/ll-activity-2/.stack-work/install/x86_64-linux-nopie/lts-8.6/8.0.2/lib/x86_64-linux-ghc-8.0.2/code-0.1.0.0-LLVNTCG4o6GLKFh3v0mF3L
+/home/mattox/tmp/tmp.yHPfG1D2zd/ll-activity-2/.stack-work/install/x86_64-linux-nopie/lts-8.13/8.0.2/lib/x86_64-linux-ghc-8.0.2/code-0.1.0.0-LLVNTCG4o6GLKFh3v0mF3L
 Installing executable(s) in
-/home/mattox/tmp/tmp.GKDa24tCHK/ll-activity-2/.stack-work/install/x86_64-linux-nopie/lts-8.6/8.0.2/bin
+/home/mattox/tmp/tmp.yHPfG1D2zd/ll-activity-2/.stack-work/install/x86_64-linux-nopie/lts-8.13/8.0.2/bin
 Registering code-0.1.0.0...
 code-0.1.0.0: test (suite: code-test)
 
@@ -35,19 +35,25 @@ Display Function:
 *** Failed! (after 1 test): 
 Exception:
   src/Lib.hs:(47,1)-(54,44): Non-exhaustive patterns in function parseE
-VarExp "ck"
-(used seed 8313988805853591316)
+VarExp "wq"
+(used seed 6224801403644398407)
   Parser works for large expressions.: [Failed]
+*** Failed! (after 2 tests): 
+Exception:
+  test/Spec.hs:44:7-35: Irrefutable pattern failed for pattern (e1, [])
+LetExp "xf" (VarExp "nnv") (IntExp (-1))
+(used seed -5190484691549065555)
+  Parser works with parens.: [Failed]
 *** Failed! (after 1 test): 
 Exception:
-  src/Lib.hs:(47,1)-(54,44): Non-exhaustive patterns in function parseE
-VarExp "snc"
-(used seed -8448043461889233066)
+  test/Spec.hs:49:7-26: Irrefutable pattern failed for pattern (e1, [])
+IntExp 0
+(used seed -7623833703360797106)
 
          Properties  Total      
  Passed  0           0          
- Failed  2           2          
- Total   2           2          
+ Failed  3           3          
+ Total   3           3          
 
 Completed 2 action(s).
 Test suite failure for package code-0.1.0.0

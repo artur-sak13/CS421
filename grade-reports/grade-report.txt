@@ -1,6 +1,6 @@
 Grade report for Artur Sak
 Programming Languages (cs421) 2017-01
-Report generated 2017-05-03 19:31:23
+Report generated 2017-05-04 12:53:24
 
 
 Factors are {16: 0.0, 11: 4.0, 12: 2.0, 13: 8.0, 14: 8.0, 15: 7.0}
@@ -19,8 +19,8 @@ First and Follow Sets - Exam 2  Graded      5 /  10  50.0    2.86   1.43
                Monads - Exam 2  Graded      1 /  10  10.0    2.86   0.29
           LL Grammars - Exam 2  Graded      0 /  20   0.0    2.86   0.00
           LR Grammars - Exam 2  Graded      0 /  10   0.0    2.86   0.00
-            Monotypes - Exam 2  Graded      0 /  20   0.0    2.86   0.00
-          Unification - Exam 2  Graded     20 /  10 200.0    2.86   5.71
+            Monotypes - Exam 2  Graded     10 /  20  50.0    2.86   1.43
+          Unification - Exam 2  Graded     20 /  20 100.0    2.86   2.86
                 Haskell - MP 1  Graded    100 / 100 100.0    3.75   3.75
             Interpreter - MP 2  Graded    100 / 100 100.0    3.75   3.75
                     CPS - MP 3  Graded    100 / 100 100.0    3.75   3.75
@@ -39,14 +39,14 @@ First and Follow Sets - Exam 2  Graded      5 /  10  50.0    2.86   1.43
                Lambda Activity  Graded      1 /   1 100.0    0.62   0.62
                   CPS Activity  Graded      3 /   3 100.0    0.62   0.62
                 Monad Activity  Graded      2 /   2 100.0    0.62   0.62
-                   LL Activity  Graded      0 /   2   0.0    0.62   0.00
+                   LL Activity  Graded      0 /   3   0.0    0.62   0.00
 
 
 
-Earned points so far:  50.30
+Earned points so far:  48.88
 Graded points so far:  75.00
-       Current score: 67.07%
-        Max possible: 75.30%
+       Current score: 65.17%
+        Max possible: 73.88%
 
  (Max possible does not take grade replacement from final into account.)
 If you believe there is an error that only affects you, please open an issue on your gitlab account.
