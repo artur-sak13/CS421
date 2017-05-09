@@ -115,9 +115,6 @@ applyPrim [f, List(args)] = apply f args
 -- Examples:
 --   (eval '(+ 1 2 3))  => 6
 evalPrim :: [Val] -> EvalState Val
--- evalPrim [Symbol arg] = return arg
--- evalPrim [Number arg] = trace(show arg) return arg
--- evalPrim [List args] = return args
 evalPrim [] = eval Void
 evalPrim [List args] = eval $ List args
 evalPrim [arg] = eval arg
