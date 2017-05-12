@@ -1,0 +1,66 @@
+Passed: 44.0
+Total: 46.0
+Score: 76.52173913043478
+
+## Test Output
+
+Calls to First:
+  first set test 1-1: [OK, passed 1 tests]
+  first set test 1-2: [OK, passed 1 tests]
+  first set test 1-3: [OK, passed 1 tests]
+  first set test 1-4: [OK, passed 1 tests]
+  first set test 2-1: [OK, passed 1 tests]
+  first set test 2-2: [OK, passed 1 tests]
+  first set test 2-3: [OK, passed 1 tests]
+  first set test 2-4: [OK, passed 1 tests]
+  first set test 3-1: [OK, passed 1 tests]
+  first set test 3-2: [OK, passed 1 tests]
+  first set test 3-3: [OK, passed 1 tests]
+  first set test 3-4: [OK, passed 1 tests]
+  first set test 4-1: [OK, passed 1 tests]
+  first set test 4-2: [OK, passed 1 tests]
+  first set test 4-3: [OK, passed 1 tests]
+  first set test 4-4: [OK, passed 1 tests]
+  first set test 5-1: [OK, passed 1 tests]
+  first set test 5-2: [OK, passed 1 tests]
+  first set test 5-3: [OK, passed 1 tests]
+  first set test 5-4: [OK, passed 1 tests]
+  first set test 6-1: [OK, passed 1 tests]
+  first set test 6-2: [OK, passed 1 tests]
+  first set test 6-3: [OK, passed 1 tests]
+  first set test 6-4: [OK, passed 1 tests]
+Calls to getFirstSet:
+  get first set test ll1: [OK, passed 1 tests]
+  get first set test ll2: [OK, passed 1 tests]
+  get first set test ll3: [OK, passed 1 tests]
+  get first set test rec1: [OK, passed 1 tests]
+  get first set test rec2: [OK, passed 1 tests]
+  get first set test rec3: [OK, passed 1 tests]
+  get first set test rec4: [OK, passed 1 tests]
+  get first set test cp1: [OK, passed 1 tests]
+  get first set test cp2: [OK, passed 1 tests]
+  get first set test cp3: [OK, passed 1 tests]
+  get first set test cp4: [OK, passed 1 tests]
+Calls to isLL on LL grammars:
+  get first set test ll1: [Failed]
+*** Failed! Falsifiable (after 1 test): 
+(used seed 3446295899036262933)
+  get first set test ll2: [Failed]
+*** Failed! Falsifiable (after 1 test): 
+(used seed 1284643896834633299)
+  get first set test ll3: [OK, passed 1 tests]
+Calls to isLL on left-recursive grammars:
+  get first set test rec1: [OK, passed 1 tests]
+  get first set test rec2: [OK, passed 1 tests]
+  get first set test rec3: [OK, passed 1 tests]
+  get first set test rec4: [OK, passed 1 tests]
+Calls to isLL on common prefix grammars:
+  get first set cp 1: [OK, passed 1 tests]
+  get first set cp 2: [OK, passed 1 tests]
+  get first set cp 3: [OK, passed 1 tests]
+  get first set cp 4: [OK, passed 1 tests]
+
+         Properties   Total       
+ Passed  44           44          
+ Failed  2            2           
+ Total   46           46          
