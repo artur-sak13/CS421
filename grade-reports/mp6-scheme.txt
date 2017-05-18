@@ -1,0 +1,34 @@
+Passed: 95.0
+Total: 100.0
+Score: 95.0
+
+## Test Output
+
+
+Running Tests
+=============
+Pass: Runtime: Arithmetic Operators
+Pass: Runtime: Boolean Operators
+Pass: Runtime: Comparison Operators
+Pass: Runtime: List Operations
+Pass: Runtime: Unary Operators
+Pass: Runtime: = and eq? Operators
+Pass: Runtime: modulo
+Pass: Runtime: dynamic types
+Exception: Runtime: more runtime tests
+Pass: Evaluator: self-evaluating atoms
+Pass: Evaluator: value lookup
+Pass: Evaluator: define special form
+Pass: Evaluator: lambda form
+Pass: Evaluator: simple HOF test
+Pass: Evaluator: conds tests
+Pass: Evaluator: let
+Pass: Evaluator: let*
+Pass: Evaluator: quote and eval
+Pass: Evaluator: define-macro
+Pass: Evaluator: quote, quasiquote, and eval
+Pass: Evaluator: apply
+Pass: Evaluator: eval
+
+Score: 95 / 100
+Some tests failed.
