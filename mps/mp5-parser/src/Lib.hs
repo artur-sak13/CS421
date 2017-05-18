@@ -185,8 +185,6 @@ checkKeys fs (k:ks) =
         then False || (checkKeys fs ks)
         else False
 
-
-
 hasCommonPrefix ((Production s xx):ps) =
   let syms =  S.fromList((concat xx))
       k    = S.singleton (Symbol s)
