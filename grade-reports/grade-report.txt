@@ -1,6 +1,6 @@
 Grade report for Artur Sak
 Programming Languages (cs421) 2017-01
-Report generated 2017-05-18 17:21:39
+Report generated 2017-05-18 18:35:32
 
 
                       Assignment   Status Points / Max             Norm Weight% Points
