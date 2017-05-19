@@ -44,10 +44,10 @@ Calls to getFirstSet:
 Calls to isLL on LL grammars:
   get first set test ll1: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed 3446295899036262933)
+(used seed -2873930156893869341)
   get first set test ll2: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed 1284643896834633299)
+(used seed 4612381902954855356)
   get first set test ll3: [OK, passed 1 tests]
 Calls to isLL on left-recursive grammars:
   get first set test rec1: [OK, passed 1 tests]

@@ -37,7 +37,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed -8384159007123756205)
+(used seed 563118267116002320)
   get first set test ll2: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -45,7 +45,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed 8006981386213092256)
+(used seed -623038891117591845)
   get first set test ll3: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -53,7 +53,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed 66887240389521374)
+(used seed 2393743098863082553)
   get first set test rec1: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -61,7 +61,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed -1611996882741694449)
+(used seed 8995762273687213103)
   get first set test rec2: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -69,7 +69,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed -7460261628959809726)
+(used seed 1468107221623723148)
   get first set test rec3: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -77,7 +77,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed 1382425762875381349)
+(used seed -8871828912308381075)
   get first set test rec4: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -85,7 +85,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed -4219173366607974356)
+(used seed -8133486834942849444)
   get first set test cp1: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -93,7 +93,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed -684504538900293020)
+(used seed -9067437881705079130)
   get first set test cp2: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -101,7 +101,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed 7871769383724175290)
+(used seed -8420942259421749977)
   get first set test cp3: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -109,7 +109,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed -639731624126346043)
+(used seed 4977273636348337406)
   get first set test cp4: [Failed]
 *** Failed! (after 1 test): 
 Exception:
@@ -117,7 +117,7 @@ Exception:
   CallStack (from HasCallStack):
     error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
     undefined, called at src/Lib.hs:145:12 in mp5-parser-0.1.0.0-BIK58XkGwoq4GxNo9lPIzd:Lib
-(used seed -5004096178805277576)
+(used seed -2294927585354843632)
 Calls to isLL on LL grammars:
   get first set test ll1: [OK, passed 1 tests]
   get first set test ll2: [OK, passed 1 tests]
@@ -125,29 +125,29 @@ Calls to isLL on LL grammars:
 Calls to isLL on left-recursive grammars:
   get first set test rec1: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed 2696340349435222697)
+(used seed 5420557624269940630)
   get first set test rec2: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed 8609137673611322922)
+(used seed 6770319374712243811)
   get first set test rec3: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed -3061149324776316041)
+(used seed 7588107978768983284)
   get first set test rec4: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed -4147162048743462174)
+(used seed -2234470620880838359)
 Calls to isLL on common prefix grammars:
   get first set cp 1: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed 6532509008719116426)
+(used seed -8108835218637933039)
   get first set cp 2: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed 6481227686248205074)
+(used seed -3319818585435387518)
   get first set cp 3: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed -7573774113760351814)
+(used seed 4755745938260999372)
   get first set cp 4: [Failed]
 *** Failed! Falsifiable (after 1 test): 
-(used seed 75037509781333722)
+(used seed 5804434872255838810)
 
          Properties   Total       
  Passed  27           27          
