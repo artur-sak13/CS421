@@ -1,6 +1,6 @@
 Grade report for Artur Sak
 Programming Languages (cs421) 2017-01
-Report generated 2017-05-18 19:37:37
+Report generated 2017-05-18 19:57:50
 
 
                       Assignment   Status Points / Max             Norm Weight% Points
@@ -10,7 +10,7 @@ Report generated 2017-05-18 19:37:37
    Algebraic Data Types - Exam 1   Graded     10 /  10            100.0    2.50   2.50
            Writing HOFs - Exam 1   Graded      2 /  10             20.0    2.50   0.50
              Using HOFs - Exam 1   Graded     10 /  10            100.0    2.50   2.50
-        Lambda Calculus - Exam 1   Graded     10 /  10            100.0    2.50   2.50
+        Lambda Calculus - Exam 1 Replaced      0 /  10            100.0    2.50   2.50
           Continuations - Exam 1   Graded     10 /  10            100.0    2.50   2.50
            Type Classes - Exam 1   Graded      2 /  10             20.0    2.50   0.50
       Regular Languages - Exam 2   Graded      0 /  20              0.0    2.86   0.00
@@ -64,6 +64,7 @@ If you believe there is an error, please open an issue on your gitlab account.
 We will *not* be checking Piazza, so please use gitlab or direct email to the instructor.
 
 Notes:
+Lambda Calculus - Exam 1's score was replaced by Lambda Calculus - Final.  Its score was 0.0%.
 Monads - Exam 2's score was replaced by Monads - Final.  Its score was 10.0%.
 LR Grammars - Exam 2's score was replaced by LR Grammars - Final.  Its score was 0.0%.
 LL Grammars - Exam 2's score was replaced by LL Grammars - Final.  Its score was 0.0%.
